@@ -1,0 +1,1789 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أكواد واجهة الأدمن الكاملة · Maxlond</title>
+<style>
+  :root{--ink:#102b3f;--ink2:#193e54;--cyan:#078da5;--cyan-pale:#e7f5f6;--green:#13805d;--green-pale:#e6f5ed;--amber:#b76b08;--amber-pale:#fff3dd;--red:#bd3f42;--red-pale:#fae9e9;--paper:#f4f7f8;--line:#dce5e8;--muted:#647782;--white:#fff;--shadow:0 2px 10px rgba(16,43,63,.06)}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:var(--paper);color:#203642;line-height:1.8;font-size:15px}
+  a{color:var(--cyan);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,pre{font-family:Consolas,'Courier New',monospace;direction:ltr;unicode-bidi:plaintext;text-align:left}
+  code{padding:2px 6px;background:#eef3f4;border-radius:4px;font-size:.9em;color:#0a4b57}
+  .top{background:linear-gradient(135deg,var(--ink) 0%,#0d3a52 100%);color:#fff;padding:36px 22px 32px;border-bottom:4px solid #42a5a0}
+  .top-inner{max-width:1280px;margin:auto}
+  .brand{font-size:12px;color:#a8c3c9;letter-spacing:1px}
+  .top h1{margin:10px 0 8px;font-size:28px;line-height:1.4;font-weight:700}
+  .top p{margin:0;color:#c7d6d9;max-width:820px}
+  .tag{display:inline-block;margin-top:12px;padding:4px 12px;border:1px solid #52717d;border-radius:20px;color:#d9e8e9;font-size:12px}
+  .layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;max-width:1280px;margin:auto;padding:24px 20px 60px}
+  .nav{position:sticky;top:16px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px;box-shadow:var(--shadow);max-height:calc(100vh - 32px);overflow:auto}
+  .nav strong{display:block;color:var(--ink);margin-bottom:10px;font-size:14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .nav-group{margin-bottom:8px}
+  .nav-group-title{font-size:12px;color:var(--muted);font-weight:700;padding:6px 8px;text-transform:uppercase;letter-spacing:.5px}
+  .nav a{display:block;padding:5px 10px;border-radius:5px;color:#425a65;font-size:13px;line-height:1.5}
+  .nav a:hover{background:var(--cyan-pale);text-decoration:none;color:var(--cyan)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow);scroll-margin-top:16px}
+  .card h2{margin:0 0 12px;color:var(--ink);font-size:20px;border-bottom:2px solid var(--cyan-pale);padding-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .card h3{margin:18px 0 8px;color:var(--ink2);font-size:16px}
+  .card p{margin:8px 0;color:#334c58;font-size:14px}
+  .file-meta{background:#f7fafb;border-right:3px solid var(--cyan);padding:10px 14px;border-radius:4px;margin:10px 0;font-size:13px}
+  .file-meta b{color:var(--ink)}
+  .file-meta span{color:var(--muted)}
+  pre.code{background:#0f2632;color:#e4f0f2;padding:16px;border-radius:6px;overflow:auto;font-size:12.5px;line-height:1.7;margin:12px 0;max-height:600px;position:relative}
+  pre.code::-webkit-scrollbar{height:9px;width:9px;background:#1a3a47}
+  pre.code::-webkit-scrollbar-thumb{background:#2e5c6d;border-radius:5px}
+  .copy-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+  .btn{border:0;border-radius:5px;background:var(--cyan);color:#fff;padding:7px 14px;font-weight:700;cursor:pointer;font-size:12.5px;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+  .btn:hover{background:#06686c}
+  .btn-copied{background:var(--green)}
+  .btn-small{padding:5px 10px;font-size:11.5px}
+  .btn-quiet{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn-quiet:hover{background:#f1f5f6;color:var(--ink)}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+  .stat{padding:12px;background:var(--cyan-pale);border-radius:6px;text-align:center}
+  .stat b{display:block;font-size:19px;color:var(--ink);font-weight:700}
+  .stat span{font-size:11.5px;color:var(--muted)}
+  .callout{border-right:4px solid var(--cyan);background:var(--cyan-pale);padding:10px 14px;border-radius:5px;margin:12px 0;font-size:13.5px}
+  .warning{border-color:#d59627;background:var(--amber-pale);color:#62450e}
+  .danger{border-color:#c75656;background:var(--red-pale);color:#722b2b}
+  .success{border-color:#16a34a;background:var(--green-pale);color:#166534}
+  .footer{text-align:center;color:var(--muted);font-size:12px;padding:24px 12px}
+  .toc-top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .toc-chip{padding:5px 12px;background:#f1f5f6;color:var(--ink2);border-radius:20px;font-size:12.5px;font-weight:600}
+  .toc-chip:hover{background:var(--cyan);color:#fff;text-decoration:none}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;direction:ltr}
+  .badge-php{background:#dbeafe;color:#1e40af}
+  .badge-sql{background:#fef3c7;color:#92400e}
+  .badge-css{background:#fce7f3;color:#9f1239}
+  .badge-js{background:#fef9c3;color:#713f12}
+  .badge-api{background:#dcfce7;color:#166534}
+  .badge-html{background:#fee2e2;color:#991b1b}
+  @media(max-width:1000px){.layout{grid-template-columns:1fr}.nav{position:static;max-height:none}.stats-row{grid-template-columns:repeat(2,1fr)}.top h1{font-size:22px}.card{padding:16px}pre.code{font-size:11.5px}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="top-inner">
+  <div class="brand">MAXLOND v2.0.0 · ADMIN PANEL</div>
+  <h1>جميع أكواد واجهة الأدمن في ملف واحد</h1>
+  <p>مجموعة كاملة من الأكواد: CSS، JavaScript، PHP للصفحات، طبقة الأمان، قاعدة البيانات، و API — كل ملف بضغطة نسخ واحدة.</p>
+  <span class="tag">📦 30+ ملفاً · قابلة للنسخ مباشرة</span>
+</div></header>
+
+<div class="layout">
+
+  <!-- ================== Navigation ================== -->
+  <nav class="nav">
+    <strong>📂 محتويات الملف</strong>
+
+    <div class="nav-group">
+      <div class="nav-group-title">🎨 CSS & JS</div>
+      <a href="#css">app.css</a>
+      <a href="#js">app.js</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">🔧 الأساسيات</div>
+      <a href="#config">config.php</a>
+      <a href="#database">database.php</a>
+      <a href="#security">security.php</a>
+      <a href="#auth">auth.php</a>
+      <a href="#helpers">helpers.php</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">🖼️ القوالب</div>
+      <a href="#header">header.php</a>
+      <a href="#footer">footer.php</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">👤 الدخول</div>
+      <a href="#login">login.php</a>
+      <a href="#register">register.php</a>
+      <a href="#logout">logout.php</a>
+      <a href="#index">index.php</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">🏠 صفحات الأدمن</div>
+      <a href="#dash">dashboard.php</a>
+      <a href="#sites">sites.php</a>
+      <a href="#users">users.php</a>
+      <a href="#pending">pending_users.php</a>
+      <a href="#plans">work_plans.php</a>
+      <a href="#updates">work_updates.php</a>
+      <a href="#reports">reports.php</a>
+      <a href="#rv">report_view.php</a>
+      <a href="#wh">warehouse.php</a>
+      <a href="#whi">warehouse_items.php</a>
+      <a href="#whm">warehouse_moves.php</a>
+      <a href="#mach">machinery.php</a>
+      <a href="#repairs">repairs.php</a>
+      <a href="#accounts">accounts.php</a>
+      <a href="#journal">journal.php</a>
+      <a href="#financial">financial.php</a>
+      <a href="#export">export.php</a>
+      <a href="#notif">notifications.php</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">🔌 API</div>
+      <a href="#apiphp">api.php</a>
+      <a href="#apiman">api/management.php</a>
+      <a href="#apiauth">api/auth.php</a>
+      <a href="#apiapi">api/accounting.php</a>
+      <a href="#apiwh">api/warehouse.php</a>
+      <a href="#apimaint">api/maintenance.php</a>
+      <a href="#apieng">api/engineer.php</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">🗄️ قاعدة البيانات</div>
+      <a href="#dbsql">database.sql</a>
+      <a href="#migration">migration.sql</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">⚙️ الإعدادات</div>
+      <a href="#htaccess">.htaccess</a>
+      <a href="#userini">.user.ini</a>
+    </div>
+  </nav>
+
+  <!-- ================== Content ================== -->
+  <main>
+
+    <section class="card">
+      <h2>📊 نظرة سريعة على الحزمة</h2>
+      <div class="stats-row">
+        <div class="stat"><b>2</b><span>ملفات CSS/JS</span></div>
+        <div class="stat"><b>5</b><span>ملفات أساسية</span></div>
+        <div class="stat"><b>18</b><span>صفحة أدمن</span></div>
+        <div class="stat"><b>7</b><span>ملفات API</span></div>
+      </div>
+      <div class="callout success">
+        <b>طريقة الاستخدام:</b> اضغط زر <strong>📋 نسخ</strong> بجانب كل ملف، ثم الصقه في ملف بنفس الاسم في مشروعك.
+      </div>
+      <div class="toc-top">
+        <a class="toc-chip" href="#css">CSS</a>
+        <a class="toc-chip" href="#js">JS</a>
+        <a class="toc-chip" href="#config">config</a>
+        <a class="toc-chip" href="#security">security</a>
+        <a class="toc-chip" href="#auth">auth</a>
+        <a class="toc-chip" href="#header">header</a>
+        <a class="toc-chip" href="#dash">dashboard</a>
+        <a class="toc-chip" href="#apiphp">api.php</a>
+        <a class="toc-chip" href="#dbsql">database.sql</a>
+      </div>
+    </section>
+
+    <!-- ==================== CSS ==================== -->
+    <section class="card" id="css">
+      <h2><span>🎨 app.css</span> <span class="badge badge-css">CSS</span></h2>
+      <div class="file-meta"><b>📁 assets/css/app.css</b> · <span>الأنماط الكاملة للنظام (RTL + responsive)</span></div>
+      <div class="copy-row"><span>اسحب أو انسخ الكود بالكامل</span><button class="btn" data-copy="code-css">📋 نسخ</button></div>
+<pre class="code" id="code-css">:root{--ink:#102b3f;--ink-soft:#193e54;--cyan:#078da5;--cyan-pale:#e7f5f6;--green:#13805d;--green-pale:#e6f5ed;--amber:#b76b08;--amber-pale:#fff3dd;--red:#bd3f42;--red-pale:#fae9e9;--paper:#f4f7f8;--line:#dce5e8;--muted:#647782;--white:#fff;--shadow:0 2px 10px rgba(16,43,63,.06)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}body{font-family:'Cairo',sans-serif;font-size:16px;margin:0;min-height:100vh;background:var(--paper);color:#203642;overflow-x:hidden}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button{cursor:pointer}.icon{width:20px;height:20px;flex:none}.sidebar{position:fixed;inset:0 0 0 auto;width:260px;z-index:50;background:var(--ink);color:#e8f1f3;display:flex;flex-direction:column;padding:20px 15px 14px;transition:transform .25s ease}.brand-lockup{display:flex;align-items:center;gap:11px;padding:5px 6px 23px;border-bottom:1px solid rgba(255,255,255,.11)}.brand-mark{display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:#0d96a9;color:white;font-size:14px;font-weight:700;letter-spacing:0}.brand-lockup strong,.brand-lockup small,.sidebar-user strong,.sidebar-user small{display:block}.brand-lockup strong{font-size:17px}.brand-lockup small,.sidebar-user small{font-size:12px;color:#9fb3bc}.sidebar-user{display:flex;align-items:center;gap:11px;padding:19px 6px}.sidebar-user strong{font-size:14px}.user-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#245169;color:#d7f5f5;font-weight:700}.side-nav{display:grid;gap:4px;align-content:start;overflow:auto}.nav-caption{font-size:11px;color:#89a2ad;padding:12px 12px 6px}.nav-link{min-height:43px;display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:6px;color:#c5d4d9;font-size:14px;transition:background .15s,color .15s}.nav-link:hover,.nav-link.active{background:#1b4358;color:#fff}.nav-link.active{box-shadow:inset -3px 0 var(--cyan)}.nav-link .icon{width:18px;height:18px;color:#83c2c9}.nav-count,.badge{display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;background:#cf5552;color:white;border-radius:20px;font-size:11px;margin-right:auto}.logout-link{margin-top:auto;background:rgba(255,255,255,.055)}.sidebar-foot{display:flex;justify-content:space-between;color:#8198a2;font-size:11px;padding:14px 8px 0}.online-dot{color:#80d5a8}.online-dot:before{content:'';display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;background:#36b783}.main-content{min-height:100vh;padding:28px 28px 40px;margin-right:260px;max-width:calc(100% - 260px)}.mobile-bar{display:none}.overlay{display:none}.page-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 auto 23px;max-width:1440px}.page-header h1{font-size:24px;line-height:1.4;margin:0;color:var(--ink);font-weight:700}.page-header p{margin:4px 0 0;color:var(--muted);font-size:13px}.page-wrap{max-width:1440px;margin-inline:auto}.panel,.stat-card,.table-panel{background:var(--white);border:1px solid var(--line);border-radius:7px;box-shadow:var(--shadow)}.panel{padding:20px}.panel-title{font-size:16px;color:var(--ink);font-weight:700;margin:0 0 16px}.grid-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:19px}.stat-card{padding:16px;min-width:0;position:relative;overflow:hidden}.stat-card:after{content:'';position:absolute;inset:0 0 auto auto;width:3px;height:100%;background:var(--accent,var(--cyan))}.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px}.stat-icon{width:36px;height:36px;border-radius:6px;display:grid;place-items:center;background:var(--tint,var(--cyan-pale));color:var(--accent,var(--cyan))}.stat-value{font-weight:700;color:var(--ink);font-size:24px;margin-top:12px;line-height:1.2}.stat-sub{font-size:11px;color:var(--muted);margin-top:4px}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.table-panel{overflow:hidden}.table-toolbar{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.table-toolbar h2{font-size:16px;margin:0;color:var(--ink)}.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}.table-wrapper table{width:100%;border-collapse:collapse;min-width:640px}.table-wrapper th,.table-wrapper td{padding:12px 15px;text-align:right;border-bottom:1px solid #edf1f2;font-size:13px;vertical-align:middle}.table-wrapper th{background:#f7f9fa;color:#61737d;font-size:12px;font-weight:700;white-space:nowrap}.table-wrapper tr:last-child td{border-bottom:0}.table-wrapper tbody tr:hover{background:#fbfcfc}.table-cards .empty-state{padding:30px;text-align:center;color:var(--muted)}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:600;color:#334c58}.field input,.field select,.field textarea,.filters input,.filters select{width:100%;border:1px solid #ccd9dd;border-radius:5px;background:white;padding:10px 11px;color:#213a46;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(7,141,165,.1)}.field textarea{min-height:95px;resize:vertical}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:5px;padding:9px 14px;min-height:40px;background:var(--ink);color:#fff;font-size:13px;font-weight:600}.btn:hover{background:#1a4359}.btn .icon{width:17px;height:17px}.btn-primary{background:var(--cyan)}.btn-primary:hover{background:#08798d}.btn-quiet{background:white;color:var(--ink);border-color:var(--line)}.btn-danger{background:var(--red)}.btn-sm{min-height:32px;padding:6px 9px;font-size:12px}.btn-group{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;align-items:center;padding:4px 9px;border-radius:20px;background:#eef2f3;color:#586d77;font-size:11px;white-space:nowrap}.pill.success{background:#e6f5ed;color:#14704e}.pill.warning{background:#fff3dd;color:#98600e}.pill.danger{background:#fae9e9;color:#a43337}.pill.info{background:#e7f5f6;color:#08798d}.progress{height:7px;background:#e8eef0;border-radius:10px;overflow:hidden;min-width:65px}.progress span{display:block;height:100%;background:var(--cyan);border-radius:inherit}.alert{padding:11px 14px;border-radius:5px;margin:0 auto 14px;max-width:1440px;font-size:13px}.alert-success{background:#e8f5ed;color:#176a4d}.alert-error{background:#fae9e9;color:#a43337}.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:9px;padding:14px 16px}.filter-actions{display:flex;align-items:end}.quick-link{display:flex;align-items:center;gap:10px;padding:13px 14px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font-size:13px;font-weight:600}.quick-link:hover{border-color:#8bbfc6;background:#fbfefe}.quick-link .stat-icon{width:34px;height:34px}.list-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #edf1f2}.list-row:last-child{border-bottom:0}.list-row strong{display:block;font-size:13px;color:#253f4b}.list-row small{display:block;font-size:11px;color:var(--muted);margin-top:3px}.empty-state{padding:26px;text-align:center;color:var(--muted);font-size:13px}.auth-page{min-height:100vh;display:grid;grid-template-columns:minmax(270px,42%) 1fr;background:var(--paper)}.auth-aside{background:var(--ink);color:#fff;padding:9vh 8vw;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.auth-aside:after{content:'';position:absolute;width:400px;height:400px;border:1px solid rgba(112,201,208,.17);border-radius:50%;bottom:-210px;left:-120px;box-shadow:0 0 0 30px rgba(112,201,208,.035),0 0 0 70px rgba(112,201,208,.025)}.auth-aside h1{font-size:36px;line-height:1.3;margin:0 0 12px}.auth-aside p{max-width:340px;color:#b5c9d0;font-size:15px;line-height:1.9}.auth-form-area{display:grid;place-items:center;padding:24px}.auth-card{width:min(440px,100%);padding:34px;background:white;border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}.auth-card h2{margin:0 0 5px;font-size:23px;color:var(--ink)}.auth-card&gt;p{margin:0 0 22px;color:var(--muted);font-size:13px}.auth-card .field{margin-bottom:14px}.auth-card .btn{width:100%;margin-top:5px}.auth-note{font-size:12px;text-align:center;margin-top:18px;color:var(--muted)}.mobile-brand{font-weight:700;letter-spacing:0}.mobile-notifications{position:relative;display:grid;place-items:center;color:white}.mobile-notifications .badge{position:absolute;top:-9px;right:-10px;min-width:17px;height:17px;font-size:10px}
+@media(max-width:1100px){.grid-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.main-content{padding:23px 20px}}
+@media(max-width:1023px){.sidebar{transform:translateX(100%);box-shadow:-10px 0 24px rgba(0,0,0,.2)}.sidebar.open{transform:translateX(0)}.overlay{display:block;position:fixed;inset:0;background:rgba(8,23,31,.48);backdrop-filter:blur(2px);z-index:40;opacity:0;visibility:hidden;transition:opacity .2s}.overlay.show{opacity:1;visibility:visible}.main-content{margin:0;max-width:none;padding:22px 18px 35px}.mobile-bar{height:58px;display:flex;position:sticky;top:0;z-index:30;background:var(--ink);color:white;padding:0 16px;align-items:center;justify-content:space-between}.menu-btn{background:transparent;color:white;border:0;padding:7px;display:grid;place-items:center}.menu-btn .icon{width:22px;height:22px}.sidebar.open~.main-content{filter:blur(1px)}}
+@media(max-width:700px){.page-header{align-items:flex-start;flex-direction:column;margin-bottom:17px}.page-header h1{font-size:21px}.grid-2,.grid-3{grid-template-columns:1fr}.panel{padding:15px}.grid-stats{gap:9px}.stat-card{padding:12px}.stat-value{font-size:21px}.table-cards table,.table-cards thead,.table-cards tbody,.table-cards th,.table-cards td,.table-cards tr{display:block;width:100%}.table-cards table{min-width:0}.table-cards thead{display:none}.table-cards tr{background:#fff;border:1px solid var(--line);border-radius:6px;margin:0 10px 10px;padding:8px 12px}.table-cards td{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid #edf1f2;text-align:left;overflow-wrap:anywhere}.table-cards td:last-child{border-bottom:0}.table-cards td:before{content:attr(data-label);font-weight:600;color:var(--muted);font-size:11px;text-align:right;flex:none}.table-toolbar{padding:13px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.filters{grid-template-columns:1fr 1fr}.filter-actions{grid-column:1/-1}.auth-page{grid-template-columns:1fr}.auth-aside{display:none}.auth-form-area{padding:18px}.auth-card{padding:25px 20px}.btn-mobile-full{width:100%}.table-wrapper table{min-width:560px}}
+@media(max-width:380px){.main-content{padding-inline:12px}.grid-stats{grid-template-columns:1fr 1fr}.stat-top{font-size:11px}.filters{grid-template-columns:1fr}}
+@media print{.sidebar,.mobile-bar,.overlay,.no-print{display:none!important}.main-content{padding:0!important;margin:0;max-width:none}.panel,.stat-card,.table-panel{box-shadow:none}}
+.grid-2&gt;*,.grid-3&gt;*{min-width:0}.panel canvas{max-width:100%}@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:minmax(0,1fr)}}
+.toast{position:fixed;z-index:100;top:20px;left:24px;max-width:min(440px,calc(100vw - 32px));padding:13px 44px 13px 18px;border:1px solid var(--line);border-right:4px solid var(--green);border-radius:6px;background:var(--white);box-shadow:0 12px 35px rgba(16,43,63,.18);font-size:14px;animation:toast-in .2s ease-out}.toast-error{border-right-color:var(--red)}.toast-close{position:absolute;left:10px;top:8px;border:0;background:transparent;color:var(--muted);font-size:20px}.toast-hidden{opacity:0;transform:translateY(-8px);transition:opacity .2s,transform .2s}@keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}.confirm-dialog{width:min(420px,calc(100% - 32px));padding:0;border:1px solid var(--line);border-radius:8px;background:var(--white);color:#203642;box-shadow:0 24px 70px rgba(16,43,63,.28)}.confirm-dialog::backdrop{background:rgba(8,23,31,.55);backdrop-filter:blur(2px)}.confirm-dialog form{display:grid;justify-items:start;gap:12px;padding:25px}.confirm-dialog h2{margin:0;font-size:19px}.confirm-dialog p{margin:0;color:var(--muted);line-height:1.8}.confirm-dialog .btn-group{justify-content:flex-start;margin-top:8px}.confirm-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--amber-pale);color:var(--amber);font-weight:700}@media(max-width:700px){.toast{left:16px;right:16px;max-width:none;top:70px}}
+.report-text{line-height:1.9;overflow-wrap:anywhere;white-space:normal}</pre>
+    </section>
+
+    <!-- ==================== JS ==================== -->
+    <section class="card" id="js">
+      <h2><span>⚙️ app.js</span> <span class="badge badge-js">JavaScript</span></h2>
+      <div class="file-meta"><b>📁 assets/js/app.js</b> · <span>سكربت الواجهة (Sidebar, Confirm, Toast)</span></div>
+      <div class="copy-row"><span>منطق الواجهة الأمامية</span><button class="btn" data-copy="code-js">📋 نسخ</button></div>
+<pre class="code" id="code-js">'use strict';
+function toggleSidebar(){const sidebar=document.getElementById('sidebar');const overlay=document.getElementById('overlay');if(!sidebar||!overlay)return;const open=!sidebar.classList.contains('open');sidebar.classList.toggle('open',open);overlay.classList.toggle('show',open);document.body.classList.toggle('mobile-open',open)}
+function closeSidebar(){const sidebar=document.getElementById('sidebar');const overlay=document.getElementById('overlay');if(sidebar)sidebar.classList.remove('open');if(overlay)overlay.classList.remove('show');document.body.classList.remove('mobile-open')}
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeSidebar()});
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(window.innerWidth>=1024)closeSidebar()},150)});
+let touchStartX=0;document.addEventListener('touchstart',event=>{touchStartX=event.touches[0].clientX},{passive:true});document.addEventListener('touchend',event=>{const sidebar=document.getElementById('sidebar');if(sidebar&&sidebar.classList.contains('open')&&touchStartX-event.changedTouches[0].clientX&lt;-80)closeSidebar()},{passive:true});
+function confirmAction(message){if(!document.createElement('dialog').showModal)return Promise.resolve(window.confirm(message));let dialog=document.getElementById('confirmDialog');if(!dialog){dialog=document.createElement('dialog');dialog.id='confirmDialog';dialog.className='confirm-dialog';dialog.innerHTML='&lt;form method="dialog"&gt;&lt;span class="confirm-mark" aria-hidden="true"&gt;!&lt;/span&gt;&lt;h2&gt;تأكيد الإجراء&lt;/h2&gt;&lt;p class="confirm-message"&gt;&lt;/p&gt;&lt;div class="btn-group"&gt;&lt;button class="btn btn-quiet" value="cancel"&gt;إلغاء&lt;/button&gt;&lt;button class="btn btn-danger" value="confirm"&gt;تأكيد&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;';document.body.appendChild(dialog);dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close('cancel')})}dialog.querySelector('.confirm-message').textContent=message;dialog.showModal();return new Promise(resolve=>dialog.addEventListener('close',()=>resolve(dialog.returnValue==='confirm'),{once:true}))}
+document.addEventListener('submit',async event=>{const submitter=event.submitter;if(!submitter?.hasAttribute('data-confirm'))return;const form=event.target;if(form.dataset.confirmed==='1'){delete form.dataset.confirmed;return}event.preventDefault();event.stopImmediatePropagation();if(await confirmAction(submitter.getAttribute('data-confirm'))){form.dataset.confirmed='1';if(form.requestSubmit)form.requestSubmit(submitter);else form.submit()}},true);
+document.addEventListener('click',async event=>{const link=event.target.closest('a[data-confirm]');if(!link)return;event.preventDefault();if(await confirmAction(link.getAttribute('data-confirm')))window.location.assign(link.href)});
+document.querySelectorAll('[data-toast]').forEach(toast=>{window.setTimeout(()=>{toast.classList.add('toast-hidden');window.setTimeout(()=>toast.remove(),220)},5000)});</pre>
+    </section>
+
+    <!-- ==================== config.php ==================== -->
+    <section class="card" id="config">
+      <h2><span>🔧 config.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="file-meta"><b>📁 config.php</b> · <span>الثوابت والإعدادات العامة</span></div>
+      <div class="copy-row"><button class="btn" data-copy="code-config">📋 نسخ</button></div>
+<pre class="code" id="code-config">&lt;?php
+declare(strict_types=1);
+
+define('APP_URL', 'http://localhost/finalmax');
+define('APP_NAME', 'Maxlond');
+define('APP_VERSION', '2.0.0');
+define('APP_TIMEZONE', 'Asia/Baghdad');
+define('SESSION_LIFETIME', 14400);
+define('MAX_LOGIN_ATTEMPTS', 5);
+define('LOCKOUT_TIME', 900);
+define('UPLOAD_PATH', __DIR__ . '/uploads/');
+define('MAX_FILE_SIZE', 5242880);
+date_default_timezone_set(APP_TIMEZONE);
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.use_strict_mode', '1');
+if (!empty($_SERVER['HTTPS']) &amp;&amp; $_SERVER['HTTPS'] !== 'off') {
+    ini_set('session.cookie_secure', '1');
+}
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}</pre>
+    </section>
+
+    <!-- ==================== database.php ==================== -->
+    <section class="card" id="database">
+      <h2><span>🗄️ database.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="file-meta"><b>📁 database.php</b> · <span>اتصال PDO + مفتاح التوقيع</span></div>
+      <div class="copy-row"><button class="btn" data-copy="code-database">📋 نسخ</button></div>
+<pre class="code" id="code-database">&lt;?php
+declare(strict_types=1);
+
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'spacepoint_recovery_20261002');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('SIGNATURE_KEY', getenv('SPACEPOINT_SIGNATURE_KEY') ?: hash('sha256', DB_USER . ':' . DB_PASS . ':SpacePoint-Journal-v2', true));
+
+function db(): PDO
+{
+    static $pdo = null;
+    if ($pdo === null) {
+        try {
+            $pdo = new PDO(
+                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
+                DB_USER,
+                DB_PASS,
+                [
+                    PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES =&gt; false,
+                ]
+            );
+        } catch (PDOException $exception) {
+            error_log('Maxlond database error: ' . $exception-&gt;getMessage());
+            http_response_code(500);
+            exit('خطأ في الاتصال بقاعدة البيانات');
+        }
+    }
+    return $pdo;
+}</pre>
+    </section>
+
+    <!-- ==================== security.php ==================== -->
+    <section class="card" id="security">
+      <h2><span>🔒 security.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="file-meta"><b>📁 security.php</b> · <span>فئة الأمان (CSRF, XSS, Upload, Throttle)</span></div>
+      <div class="copy-row"><button class="btn" data-copy="code-security">📋 نسخ</button></div>
+<pre class="code" id="code-security">&lt;?php
+declare(strict_types=1);
+
+class Security
+{
+    public static function csrfToken(): string
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return (string) $_SESSION['csrf_token'];
+    }
+
+    public static function csrfField(): string
+    {
+        return '&lt;input type="hidden" name="csrf_token" value="' . self::e(self::csrfToken()) . '"&gt;';
+    }
+
+    public static function verifyCsrf(?string $token): bool
+    {
+        return $token !== null &amp;&amp; $token !== '' &amp;&amp; !empty($_SESSION['csrf_token'])
+            &amp;&amp; hash_equals((string) $_SESSION['csrf_token'], $token);
+    }
+
+    public static function requireCsrf(): void
+    {
+        if (!self::verifyCsrf(isset($_POST['csrf_token']) ? (string) $_POST['csrf_token'] : null)) {
+            http_response_code(419);
+            exit('انتهت صلاحية الجلسة');
+        }
+    }
+
+    public static function clean(?string $value, int $max = 5000): string
+    {
+        $value = trim((string) $value);
+        if (function_exists('mb_strlen') &amp;&amp; mb_strlen($value, 'UTF-8') &gt; $max) {
+            return mb_substr($value, 0, $max, 'UTF-8');
+        }
+        return strlen($value) &gt; $max ? substr($value, 0, $max) : $value;
+    }
+
+    public static function e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    public static function getClientIp(): string
+    {
+        foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'] as $key) {
+            if (!empty($_SERVER[$key])) {
+                $candidate = trim(explode(',', (string) $_SERVER[$key])[0]);
+                if (filter_var($candidate, FILTER_VALIDATE_IP)) {
+                    return $candidate;
+                }
+            }
+        }
+        return '0.0.0.0';
+    }
+
+    public static function throttle(string $key, int $max, int $window): bool
+    {
+        $now = time();
+        $bucket = isset($_SESSION['_throttle'][$key]) &amp;&amp; is_array($_SESSION['_throttle'][$key])
+            ? $_SESSION['_throttle'][$key] : [];
+        $bucket = array_values(array_filter($bucket, static function ($timestamp) use ($now, $window): bool {
+            return is_int($timestamp) &amp;&amp; $timestamp &gt; $now - $window;
+        }));
+        if (count($bucket) &gt;= $max) {
+            $_SESSION['_throttle'][$key] = $bucket;
+            return false;
+        }
+        $bucket[] = $now;
+        $_SESSION['_throttle'][$key] = $bucket;
+        return true;
+    }
+
+    public static function fingerprint(?string $clientFingerprint = null): string
+    {
+        $parts = [
+            (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''),
+            (string) ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''),
+            self::getClientIp(),
+        ];
+        $serverFingerprint = hash('sha256', implode('|', $parts));
+        if ($clientFingerprint !== null &amp;&amp; strlen($clientFingerprint) &gt;= 16) {
+            return hash('sha256', $serverFingerprint . '::' . self::clean($clientFingerprint, 128));
+        }
+        return $serverFingerprint;
+    }
+
+    public static function uploadReceipt(array $file): ?array
+    {
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+        if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || (int) ($file['size'] ?? 0) &gt; MAX_FILE_SIZE) {
+            throw new RuntimeException('الملف غير صالح أو يتجاوز الحجم المسموح');
+        }
+        $mime = (new finfo(FILEINFO_MIME_TYPE))-&gt;file((string) $file['tmp_name']);
+        $extensions = ['image/jpeg' =&gt; 'jpg', 'image/png' =&gt; 'png', 'image/webp' =&gt; 'webp', 'application/pdf' =&gt; 'pdf'];
+        if (!isset($extensions[$mime])) {
+            throw new RuntimeException('يسمح بصور JPEG وPNG وWebP وملفات PDF فقط');
+        }
+        $directory = UPLOAD_PATH . 'receipts/';
+        if (!is_dir($directory) &amp;&amp; !mkdir($directory, 0750, true) &amp;&amp; !is_dir($directory)) {
+            throw new RuntimeException('تعذر إنشاء مجلد المرفقات');
+        }
+        $filename = bin2hex(random_bytes(20)) . '.' . $extensions[$mime];
+        if (!move_uploaded_file((string) $file['tmp_name'], $directory . $filename)) {
+            throw new RuntimeException('تعذر حفظ المرفق');
+        }
+        return [
+            'path' =&gt; 'uploads/receipts/' . $filename,
+            'name' =&gt; self::clean((string) ($file['name'] ?? ''), 255),
+            'mime' =&gt; $mime,
+            'size' =&gt; (int) $file['size'],
+        ];
+    }
+}</pre>
+    </section>
+
+    <!-- ==================== auth.php ==================== -->
+    <section class="card" id="auth">
+      <h2><span>🔐 auth.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="file-meta"><b>📁 auth.php</b> · <span>فئة المصادقة (login, check, requireRole, logout)</span></div>
+      <div class="copy-row"><button class="btn" data-copy="code-auth">📋 نسخ</button></div>
+<pre class="code" id="code-auth">&lt;?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/security.php';
+
+class Auth
+{
+    public static function login(string $username, string $password): array
+    {
+        $username = Security::clean($username, 100);
+        if ($username === '' || $password === '') {
+            return ['ok' =&gt; false, 'msg' =&gt; 'أدخل اسم المستخدم وكلمة المرور'];
+        }
+        if (!Security::throttle('login_' . Security::getClientIp(), MAX_LOGIN_ATTEMPTS, LOCKOUT_TIME)) {
+            return ['ok' =&gt; false, 'msg' =&gt; 'محاولات كثيرة. حاول لاحقاً'];
+        }
+        $statement = db()-&gt;prepare('SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1');
+        $statement-&gt;execute([$username, $username]);
+        $user = $statement-&gt;fetch();
+        if (!$user || !password_verify($password, (string) $user['password_hash'])) {
+            self::audit(null, 'login_failed', 'user', $user ? (int) $user['id'] : null);
+            return ['ok' =&gt; false, 'msg' =&gt; 'بيانات الدخول غير صحيحة'];
+        }
+        if ((int) $user['is_active'] !== 1) {
+            return ['ok' =&gt; false, 'msg' =&gt; 'الحساب معطّل'];
+        }
+        if ($user['approval_status'] !== 'approved') {
+            return ['ok' =&gt; false, 'msg' =&gt; $user['approval_status'] === 'pending' ? 'بانتظار موافقة المدير' : 'تم رفض الحساب'];
+        }
+        $fingerprint = Security::fingerprint();
+        $pdo = db();
+        $pdo-&gt;prepare('INSERT INTO device_fingerprints (user_id, fingerprint_hash, user_agent, ip_address, last_seen) VALUES (?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE last_seen = NOW()')
+            -&gt;execute([(int) $user['id'], $fingerprint, substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 500), Security::getClientIp()]);
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = (int) $user['id'];
+        $_SESSION['username'] = (string) $user['username'];
+        $_SESSION['full_name'] = (string) $user['full_name'];
+        $_SESSION['role'] = (string) $user['role'];
+        $_SESSION['fingerprint'] = $fingerprint;
+        $_SESSION['login_time'] = time();
+        $_SESSION['last_activity'] = time();
+        $pdo-&gt;prepare('INSERT INTO sessions (id, user_id, fingerprint_hash, ip_address, user_agent, last_activity) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE user_id = VALUES(user_id), fingerprint_hash = VALUES(fingerprint_hash), last_activity = VALUES(last_activity)')
+            -&gt;execute([session_id(), (int) $user['id'], $fingerprint, Security::getClientIp(), substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 500), time()]);
+        $pdo-&gt;prepare('UPDATE users SET last_login = NOW() WHERE id = ?')-&gt;execute([(int) $user['id']]);
+        self::audit((int) $user['id'], 'login_success', 'user', (int) $user['id']);
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        return ['ok' =&gt; true, 'user' =&gt; $user];
+    }
+
+    public static function check(): bool
+    {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['fingerprint'])) {
+            return false;
+        }
+        if (time() - (int) ($_SESSION['last_activity'] ?? 0) &gt; SESSION_LIFETIME) {
+            self::logout();
+            return false;
+        }
+        $currentFingerprint = Security::fingerprint();
+        if (!hash_equals((string) $_SESSION['fingerprint'], $currentFingerprint)) {
+            self::logout();
+            return false;
+        }
+        $statement = db()-&gt;prepare('SELECT 1 FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.id = ? AND s.user_id = ? AND s.fingerprint_hash = ? AND u.is_active = 1 AND u.approval_status = ?');
+        $statement-&gt;execute([session_id(), (int) $_SESSION['user_id'], (string) $_SESSION['fingerprint'], 'approved']);
+        if (!$statement-&gt;fetchColumn()) {
+            self::logout();
+            return false;
+        }
+        db()-&gt;prepare('UPDATE sessions SET last_activity = ? WHERE id = ?')-&gt;execute([time(), session_id()]);
+        $_SESSION['last_activity'] = time();
+        return true;
+    }
+
+    public static function requireLogin(): void
+    {
+        if (!self::check()) {
+            header('Location: ' . APP_URL . '/login.php');
+            exit;
+        }
+    }
+
+    public static function requireRole(string ...$roles): void
+    {
+        self::requireLogin();
+        if (!in_array((string) ($_SESSION['role'] ?? ''), $roles, true)) {
+            http_response_code(403);
+            exit('غير مصرح');
+        }
+    }
+
+    public static function user(): ?array
+    {
+        if (empty($_SESSION['user_id'])) {
+            return null;
+        }
+        $statement = db()-&gt;prepare('SELECT id, full_name, username, email, role, phone, specialization, signature_path, last_login FROM users WHERE id = ?');
+        $statement-&gt;execute([(int) $_SESSION['user_id']]);
+        $user = $statement-&gt;fetch();
+        return $user ?: null;
+    }
+
+    public static function id(): ?int
+    {
+        return isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
+    }
+
+    public static function role(): ?string
+    {
+        return isset($_SESSION['role']) ? (string) $_SESSION['role'] : null;
+    }
+
+    public static function isAdmin(): bool
+    {
+        return self::role() === 'admin';
+    }
+
+    public static function logout(): void
+    {
+        if (!empty($_SESSION['user_id'])) {
+            self::audit((int) $_SESSION['user_id'], 'logout', 'user', (int) $_SESSION['user_id']);
+            db()-&gt;prepare('DELETE FROM sessions WHERE id = ?')-&gt;execute([session_id()]);
+        }
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], (bool) $params['secure'], (bool) $params['httponly']);
+        }
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
+    }
+
+    private static function audit(?int $userId, string $action, ?string $entityType = null, ?int $entityId = null): void
+    {
+        try {
+            db()-&gt;prepare('INSERT INTO audit_log (user_id, action, entity_type, entity_id, ip_address) VALUES (?, ?, ?, ?, ?)')
+                -&gt;execute([$userId, $action, $entityType, $entityId, Security::getClientIp()]);
+        } catch (Throwable $exception) {
+            error_log('Maxlond audit error: ' . $exception-&gt;getMessage());
+        }
+    }
+}</pre>
+    </section>
+
+    <!-- ==================== helpers.php ==================== -->
+    <section class="card" id="helpers">
+      <h2><span>🧰 helpers.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="file-meta"><b>📁 helpers.php</b> · <span>الدوال المساعدة العامة</span></div>
+      <div class="copy-row"><button class="btn" data-copy="code-helpers">📋 نسخ</button></div>
+<pre class="code" id="code-helpers">&lt;?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/security.php';
+
+function redirect(string $path): void
+{
+    header('Location: ' . APP_URL . '/' . ltrim($path, '/'));
+    exit;
+}
+
+function notify(int $userId, string $title, string $message, string $type = 'info', ?string $link = null): void
+{
+    $statement = db()-&gt;prepare('INSERT INTO notifications (user_id, title, message, type, link) VALUES (?, ?, ?, ?, ?)');
+    $statement-&gt;execute([$userId, Security::clean($title, 255), Security::clean($message, 5000), $type, $link]);
+}
+
+function notifyAdmins(string $title, string $message, string $type = 'info', ?string $link = null): void
+{
+    $statement = db()-&gt;prepare("SELECT id FROM users WHERE role = 'admin' AND is_active = 1 AND approval_status = 'approved'");
+    $statement-&gt;execute();
+    foreach ($statement-&gt;fetchAll() as $admin) {
+        notify((int) $admin['id'], $title, $message, $type, $link);
+    }
+}
+
+function pageUrl(string $path): string
+{
+    return APP_URL . '/' . ltrim($path, '/');
+}
+
+function money($amount): string
+{
+    return number_format((float) $amount, 2, '.', ',');
+}
+
+function statusLabel(string $status): string
+{
+    $labels = [
+        'planning' =&gt; 'تخطيط', 'active' =&gt; 'نشط', 'paused' =&gt; 'متوقف', 'completed' =&gt; 'مكتمل', 'cancelled' =&gt; 'ملغى',
+        'available' =&gt; 'متاحة', 'in_use' =&gt; 'قيد الاستخدام', 'maintenance' =&gt; 'صيانة', 'out_of_service' =&gt; 'خارج الخدمة',
+        'pending' =&gt; 'بالانتظار', 'in_progress' =&gt; 'قيد التنفيذ', 'review' =&gt; 'مراجعة', 'done' =&gt; 'منتهية',
+        'draft' =&gt; 'مسودة', 'submitted' =&gt; 'مرسلة', 'approved' =&gt; 'معتمدة', 'rejected' =&gt; 'مرفوضة',
+        'waiting_parts' =&gt; 'بانتظار قطع', 'posted' =&gt; 'مرحّل', 'adjust' =&gt; 'تسوية', 'in' =&gt; 'وارد', 'out' =&gt; 'صادر',
+        'low' =&gt; 'منخفضة', 'medium' =&gt; 'متوسطة', 'high' =&gt; 'عالية', 'urgent' =&gt; 'عاجلة',
+    ];
+    return $labels[$status] ?? $status;
+}
+
+function audit(string $action, ?string $entityType = null, ?int $entityId = null, ?string $details = null): void
+{
+    $userId = array_key_exists('apiUserId', $GLOBALS)
+        ? ($GLOBALS['apiUserId'] === null ? null : (int) $GLOBALS['apiUserId'])
+        : (class_exists('Auth') ? Auth::id() : null);
+    $statement = db()-&gt;prepare('INSERT INTO audit_log (user_id, action, entity_type, entity_id, ip_address, details) VALUES (?, ?, ?, ?, ?, ?)');
+    $statement-&gt;execute([$userId, Security::clean($action, 100), $entityType, $entityId, Security::getClientIp(), $details]);
+}
+
+function createJournalEntry(string $description, array $lines, int $createdBy, ?int $siteId = null, ?int $reportId = null, ?string $reference = null): int
+{
+    $debit = 0.0;
+    $credit = 0.0;
+    $signedLines = [];
+    foreach ($lines as $line) {
+        $accountId = (int) ($line['account_id'] ?? 0);
+        $lineDebit = round((float) ($line['debit'] ?? 0), 2);
+        $lineCredit = round((float) ($line['credit'] ?? 0), 2);
+        if ($accountId &lt; 1 || $lineDebit &lt; 0 || $lineCredit &lt; 0 || ($lineDebit &gt; 0 &amp;&amp; $lineCredit &gt; 0)) {
+            throw new InvalidArgumentException('بيانات أحد بنود القيد غير صالحة');
+        }
+        $lineDescription = Security::clean((string) ($line['description'] ?? ''), 500);
+        $debit += $lineDebit;
+        $credit += $lineCredit;
+        $signedLines[] = [$accountId, number_format($lineDebit, 2, '.', ''), number_format($lineCredit, 2, '.', ''), $lineDescription];
+    }
+    if ($lines === [] || abs($debit - $credit) &gt; 0.005) {
+        throw new InvalidArgumentException('القيد غير متوازن');
+    }
+    $pdo = db();
+    $ownsTransaction = !$pdo-&gt;inTransaction();
+    if ($ownsTransaction) {
+        $pdo-&gt;beginTransaction();
+    }
+    try {
+        $number = 'JE-' . date('Ymd-His') . '-' . random_int(100, 999);
+        $signedAt = date('Y-m-d H:i:s');
+        $cleanDescription = Security::clean($description, 500);
+        $payload = json_encode([$number, $cleanDescription, number_format($debit, 2, '.', ''), number_format($credit, 2, '.', ''), $siteId, $reportId, $reference, $signedLines], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+        $signature = hash_hmac('sha256', $payload, SIGNATURE_KEY);
+        $entry = $pdo-&gt;prepare('INSERT INTO journal_entries (entry_number, entry_date, description, reference, site_id, report_id, total_debit, total_credit, status, signature_hash, signed_by, signed_at, created_by) VALUES (?, CURRENT_DATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $entry-&gt;execute([$number, $cleanDescription, $reference, $siteId, $reportId, $debit, $credit, 'posted', $signature, $createdBy, $signedAt, $createdBy]);
+        $entryId = (int) $pdo-&gt;lastInsertId();
+        $insertLine = $pdo-&gt;prepare('INSERT INTO journal_entry_lines (entry_id, account_id, debit, credit, description) VALUES (?, ?, ?, ?, ?)');
+        $accountType = $pdo-&gt;prepare('SELECT type FROM accounts WHERE id = ? FOR UPDATE');
+        $updateBalance = $pdo-&gt;prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?');
+        foreach ($lines as $line) {
+            $accountId = (int) $line['account_id'];
+            $lineDebit = (float) ($line['debit'] ?? 0);
+            $lineCredit = (float) ($line['credit'] ?? 0);
+            $insertLine-&gt;execute([$entryId, $accountId, $lineDebit, $lineCredit, Security::clean((string) ($line['description'] ?? ''), 500)]);
+            $accountType-&gt;execute([$accountId]);
+            $type = (string) $accountType-&gt;fetchColumn();
+            $normalDebit = in_array($type, ['asset', 'expense'], true);
+            $updateBalance-&gt;execute([$normalDebit ? $lineDebit - $lineCredit : $lineCredit - $lineDebit, $accountId]);
+        }
+        if ($ownsTransaction) {
+            $pdo-&gt;commit();
+        }
+        return $entryId;
+    } catch (Throwable $exception) {
+        if ($ownsTransaction &amp;&amp; $pdo-&gt;inTransaction()) {
+            $pdo-&gt;rollBack();
+        }
+        throw $exception;
+    }
+}
+
+function icon(string $name, string $class = 'icon'): string
+{
+    $paths = [
+        'grid' =&gt; '&lt;rect x="3" y="3" width="7" height="7" rx="1"/&gt;&lt;rect x="14" y="3" width="7" height="7" rx="1"/&gt;&lt;rect x="3" y="14" width="7" height="7" rx="1"/&gt;&lt;rect x="14" y="14" width="7" height="7" rx="1"/&gt;',
+        'users' =&gt; '&lt;path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/&gt;&lt;circle cx="10" cy="7" r="4"/&gt;&lt;path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/&gt;',
+        'pin' =&gt; '&lt;path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/&gt;&lt;circle cx="12" cy="10" r="2.5"/&gt;',
+        'truck' =&gt; '&lt;path d="M3 7h11v11H3zM14 11h4l3 3v4h-7z"/&gt;&lt;circle cx="7.5" cy="19" r="1.5"/&gt;&lt;circle cx="17.5" cy="19" r="1.5"/&gt;',
+        'tool' =&gt; '&lt;path d="M14.7 6.3a5 5 0 0 0-6.4 6.4L3 18l3 3 5.3-5.3a5 5 0 0 0 6.4-6.4L14 13l-3-3z"/&gt;',
+        'clipboard' =&gt; '&lt;rect x="5" y="4" width="14" height="17" rx="2"/&gt;&lt;path d="M9 4V2h6v2M8 10h8M8 14h8M8 18h5"/&gt;',
+        'chart' =&gt; '&lt;path d="M3 3v18h18M8 16v-5M13 16V6M18 16v-8"/&gt;',
+        'box' =&gt; '&lt;path d="m12 3 9 5-9 5-9-5 9-5Z"/&gt;&lt;path d="M3 8v9l9 5 9-5V8M12 13v9"/&gt;',
+        'bell' =&gt; '&lt;path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/&gt;',
+        'book' =&gt; '&lt;path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/&gt;',
+        'logout' =&gt; '&lt;path d="M10 17l5-5-5-5M15 12H3M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/&gt;',
+        'menu' =&gt; '&lt;path d="M4 6h16M4 12h16M4 18h16"/&gt;',
+        'plus' =&gt; '&lt;path d="M12 5v14M5 12h14"/&gt;',
+        'check' =&gt; '&lt;path d="m5 12 4 4L19 6"/&gt;',
+        'close' =&gt; '&lt;path d="m18 6-12 12M6 6l12 12"/&gt;',
+        'search' =&gt; '&lt;circle cx="11" cy="11" r="7"/&gt;&lt;path d="m20 20-4-4"/&gt;',
+        'wallet' =&gt; '&lt;rect x="3" y="5" width="18" height="15" rx="2"/&gt;&lt;path d="M3 9h18M16 15h2"/&gt;',
+    ];
+    $body = $paths[$name] ?? $paths['grid'];
+    return '&lt;svg class="' . Security::e($class) . '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;' . $body . '&lt;/svg&gt;';
+}</pre>
+    </section>
+
+    <!-- ==================== header.php ==================== -->
+    <section class="card" id="header">
+      <h2><span>🖼️ header.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="file-meta"><b>📁 header.php</b> · <span>القالب العلوي + Sidebar + Topbar + Toast</span></div>
+      <div class="copy-row"><button class="btn" data-copy="code-header">📋 نسخ</button></div>
+<pre class="code" id="code-header">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/auth.php';
+
+$pageTitle = isset($pageTitle) ? (string) $pageTitle : APP_NAME;
+$currentRole = Auth::role() ?? 'engineer';
+$notificationPath = $currentRole === 'engineer' ? 'engineer/notifications.php' : 'admin/notifications.php';
+$countQuery = db()-&gt;prepare('SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0');
+$countQuery-&gt;execute([Auth::id()]);
+$unreadCount = (int) $countQuery-&gt;fetchColumn();
+$flashMessages = [
+    'saved'=&gt;['تم حفظ البيانات بنجاح','success'], 'updated'=&gt;['تم تحديث البيانات بنجاح','success'],
+    'deleted'=&gt;['تم الحذف بنجاح','success'], 'invalid'=&gt;['تحقق من البيانات المدخلة','error'],
+    'report_saved'=&gt;['تم إرسال التقرير بنجاح','success'],
+];
+$flashRaw = $_GET['msg'] ?? '';
+$flashKey = Security::clean(is_string($flashRaw) ? $flashRaw : '', 500);
+$flash = $flashMessages[$flashKey] ?? null;
+if (!$flash &amp;&amp; $flashKey !== '') $flash = [$flashKey, 'error'];
+$navItems = $currentRole === 'admin' ? [
+    ['admin/dashboard.php', 'لوحة التحكم', 'grid'], ['admin/sites.php', 'المواقع', 'pin'],
+    ['admin/work_plans.php', 'خطط العمل', 'clipboard'], ['admin/reports.php', 'التقارير اليومية', 'chart'],
+    ['admin/machinery.php', 'الآليات', 'truck'], ['admin/repairs.php', 'تصليح الآليات', 'tool'],
+    ['admin/warehouse.php', 'المخزن', 'box'], ['admin/accounts.php', 'الحسابات', 'book'],
+    ['admin/financial.php', 'التقارير المالية', 'chart'], ['admin/journal.php', 'القيود اليومية', 'clipboard'],
+    ['admin/work_updates.php', 'تحديثات المهندسين', 'clipboard'],
+    ['admin/users.php', 'المستخدمون', 'users'], ['admin/notifications.php', 'الإشعارات', 'bell'],
+] : [['engineer/dashboard.php', 'لوحة المهندس', 'grid']];
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ar" dir="rtl"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"&gt;
+    &lt;meta name="theme-color" content="#102b3f"&gt;
+    &lt;title&gt;&lt;?= Security::e($pageTitle . ' | ' . APP_NAME) ?&gt;&lt;/title&gt;
+    &lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;
+    &lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;
+    &lt;link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"&gt;
+    &lt;link rel="stylesheet" href="&lt;?= Security::e(APP_URL) ?&gt;/assets/css/app.css?v=&lt;?= (int) filemtime(__DIR__ . '/assets/css/app.css') ?&gt;"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;?php if ($flash): ?&gt;&lt;div class="toast toast-&lt;?= Security::e($flash[1]) ?&gt;" role="status" data-toast&gt;&lt;?= Security::e($flash[0]) ?&gt;&lt;button type="button" class="toast-close" onclick="this.parentElement.remove()"&gt;×&lt;/button&gt;&lt;/div&gt;&lt;?php endif; ?&gt;
+&lt;header class="mobile-bar"&gt;
+    &lt;button type="button" class="menu-btn" onclick="toggleSidebar()" aria-label="فتح القائمة"&gt;&lt;?= icon('menu') ?&gt;&lt;/button&gt;
+    &lt;a class="mobile-brand" href="&lt;?= Security::e(APP_URL) ?&gt;/index.php"&gt;Maxlond&lt;/a&gt;
+    &lt;a class="mobile-notifications" href="&lt;?= Security::e(pageUrl($notificationPath)) ?&gt;" aria-label="الإشعارات"&gt;&lt;?= icon('bell') ?&gt;&lt;?php if ($unreadCount &gt; 0): ?&gt;&lt;span class="badge"&gt;&lt;?= $unreadCount ?&gt;&lt;/span&gt;&lt;?php endif; ?&gt;&lt;/a&gt;
+&lt;/header&gt;
+&lt;div id="overlay" class="overlay" onclick="closeSidebar()"&gt;&lt;/div&gt;
+&lt;aside id="sidebar" class="sidebar"&gt;
+    &lt;a class="brand-lockup" href="&lt;?= Security::e(APP_URL) ?&gt;/index.php"&gt;&lt;span class="brand-mark"&gt;ML&lt;/span&gt;&lt;span&gt;&lt;strong&gt;Maxlond&lt;/strong&gt;&lt;small&gt;إدارة المشاريع المدنية&lt;/small&gt;&lt;/span&gt;&lt;/a&gt;
+    &lt;div class="sidebar-user"&gt;&lt;span class="user-avatar"&gt;&lt;?= Security::e(mb_substr((string) ($_SESSION['full_name'] ?? 'م'), 0, 1, 'UTF-8')) ?&gt;&lt;/span&gt;&lt;span&gt;&lt;strong&gt;&lt;?= Security::e($_SESSION['full_name'] ?? '') ?&gt;&lt;/strong&gt;&lt;small&gt;&lt;?= ['admin'=&gt;'مدير النظام','accountant'=&gt;'قسم الحسابات','engineer'=&gt;'مهندس موقع'][$currentRole] ?? 'مستخدم' ?&gt;&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+    &lt;nav class="side-nav"&gt;
+        &lt;span class="nav-caption"&gt;القائمة الرئيسية&lt;/span&gt;
+        &lt;?php foreach ($navItems as [$path, $label, $symbol]): ?&gt;
+            &lt;a href="&lt;?= Security::e(pageUrl($path)) ?&gt;" class="nav-link&lt;?= basename((string) ($_SERVER['SCRIPT_NAME'] ?? '')) === basename($path) ? ' active' : '' ?&gt;"&gt;&lt;?= icon($symbol) ?&gt;&lt;span&gt;&lt;?= Security::e($label) ?&gt;&lt;/span&gt;
+                &lt;?php if ($path === $notificationPath &amp;&amp; $unreadCount &gt; 0): ?&gt;&lt;span class="nav-count"&gt;&lt;?= $unreadCount ?&gt;&lt;/span&gt;&lt;?php endif; ?&gt;
+            &lt;/a&gt;
+        &lt;?php endforeach; ?&gt;
+    &lt;/nav&gt;
+    &lt;a class="nav-link logout-link" href="&lt;?= Security::e(APP_URL) ?&gt;/logout.php"&gt;&lt;?= icon('logout') ?&gt;&lt;span&gt;تسجيل الخروج&lt;/span&gt;&lt;/a&gt;
+    &lt;div class="sidebar-foot"&gt;&lt;span&gt;الإصدار &lt;?= Security::e(APP_VERSION) ?&gt;&lt;/span&gt;&lt;span class="online-dot"&gt;متصل&lt;/span&gt;&lt;/div&gt;
+&lt;/aside&gt;</pre>
+    </section>
+
+    <!-- ==================== footer.php ==================== -->
+    <section class="card" id="footer">
+      <h2><span>🖼️ footer.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-footer">📋 نسخ</button></div>
+<pre class="code" id="code-footer">&lt;?php
+declare(strict_types=1);
+?&gt;
+&lt;script&gt;window.APP_URL = &lt;?= json_encode(APP_URL, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?&gt;;&lt;/script&gt;
+&lt;script src="&lt;?= Security::e(APP_URL) ?&gt;/assets/js/app.js?v=&lt;?= (int) filemtime(__DIR__ . '/assets/js/app.js') ?&gt;"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    </section>
+
+    <!-- ==================== login.php ==================== -->
+    <section class="card" id="login">
+      <h2><span>👤 login.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-login">📋 نسخ</button></div>
+<pre class="code" id="code-login">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/helpers.php';
+
+if (Auth::check()) {
+    redirect(match (Auth::role()) {'admin'=&gt;'admin/dashboard.php','accountant'=&gt;'admin/financial.php',default=&gt;'engineer/dashboard.php'});
+}
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Security::requireCsrf();
+    $result = Auth::login(Security::clean($_POST['username'] ?? '', 100), (string) ($_POST['password'] ?? ''));
+    if ($result['ok']) {
+        redirect(match ((string) $result['user']['role']) {'admin'=&gt;'admin/dashboard.php','accountant'=&gt;'admin/financial.php',default=&gt;'engineer/dashboard.php'});
+    }
+    $error = (string) $result['msg'];
+}
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ar" dir="rtl"&gt;&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;&lt;title&gt;تسجيل الدخول | Maxlond&lt;/title&gt;&lt;link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"&gt;&lt;link rel="stylesheet" href="&lt;?= Security::e(APP_URL) ?&gt;/assets/css/app.css"&gt;&lt;/head&gt;
+&lt;body class="auth-page"&gt;
+&lt;aside class="auth-aside"&gt;&lt;a class="brand-lockup" href="&lt;?= Security::e(APP_URL) ?&gt;"&gt;&lt;span class="brand-mark"&gt;ML&lt;/span&gt;&lt;span&gt;&lt;strong&gt;Maxlond&lt;/strong&gt;&lt;small&gt;إدارة المشاريع المدنية&lt;/small&gt;&lt;/span&gt;&lt;/a&gt;&lt;div&gt;&lt;h1&gt;مساحة واحدة&lt;br&gt;لإدارة أعمالك&lt;/h1&gt;&lt;p&gt;تابع المواقع والفرق والآليات والتقارير المالية من لوحة عمل موحدة.&lt;/p&gt;&lt;/div&gt;&lt;small&gt;نظام إدارة المقاولات والأعمال المدنية&lt;/small&gt;&lt;/aside&gt;
+&lt;main class="auth-form-area"&gt;
+&lt;section class="auth-card"&gt;
+&lt;h2&gt;مرحباً بعودتك&lt;/h2&gt;&lt;p&gt;سجّل الدخول إلى مساحة العمل&lt;/p&gt;
+&lt;?php if ($error !== ''): ?&gt;&lt;div class="alert alert-error"&gt;&lt;?= Security::e($error) ?&gt;&lt;/div&gt;&lt;?php endif; ?&gt;
+&lt;form method="post" autocomplete="on"&gt;&lt;?= Security::csrfField() ?&gt;
+&lt;div class="field"&gt;&lt;label&gt;اسم المستخدم أو البريد الإلكتروني&lt;/label&gt;&lt;input name="username" required maxlength="100" value="&lt;?= Security::e($_POST['username'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;كلمة المرور&lt;/label&gt;&lt;input name="password" type="password" required autocomplete="current-password"&gt;&lt;/div&gt;
+&lt;button class="btn btn-primary" type="submit"&gt;تسجيل الدخول&lt;/button&gt;
+&lt;/form&gt;
+&lt;div class="auth-note"&gt;ليس لديك حساب؟ &lt;a href="&lt;?= Security::e(APP_URL) ?&gt;/register.php" style="color:var(--cyan);font-weight:700"&gt;إنشاء حساب مهندس&lt;/a&gt;&lt;/div&gt;
+&lt;/section&gt;&lt;/main&gt;
+&lt;script src="&lt;?= Security::e(APP_URL) ?&gt;/assets/js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;</pre>
+    </section>
+
+    <!-- ==================== register.php ==================== -->
+    <section class="card" id="register">
+      <h2><span>📝 register.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-register">📋 نسخ</button></div>
+<pre class="code" id="code-register">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/helpers.php';
+
+$error = '';
+$success = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Security::requireCsrf();
+    if (!Security::throttle('register_' . Security::getClientIp(), 3, 3600)) {
+        $error = 'تم تجاوز عدد محاولات التسجيل. حاول لاحقاً';
+    } else {
+        $name = Security::clean($_POST['full_name'] ?? '', 150);
+        $username = Security::clean($_POST['username'] ?? '', 80);
+        $email = Security::clean($_POST['email'] ?? '', 150);
+        $phone = Security::clean($_POST['phone'] ?? '', 30);
+        $specialization = Security::clean($_POST['specialization'] ?? '', 100);
+        $password = (string) ($_POST['password'] ?? '');
+        if ($name === '' || !preg_match('/^[a-zA-Z0-9_.-]{3,80}$/', $username) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) &lt; 10) {
+            $error = 'تحقق من البيانات. يجب أن تتكون كلمة المرور من 10 أحرف على الأقل';
+        } else {
+            try {
+                $statement = db()-&gt;prepare("INSERT INTO users (full_name, username, email, password_hash, role, phone, specialization, approval_status, is_active) VALUES (?, ?, ?, ?, 'engineer', ?, ?, 'pending', 1)");
+                $statement-&gt;execute([$name, $username, $email, password_hash($password, PASSWORD_DEFAULT), $phone, $specialization]);
+                notifyAdmins('طلب تسجيل جديد', 'طلب المهندس ' . $name . ' الموافقة على حسابه', 'warning', 'admin/pending_users.php');
+                $success = true;
+            } catch (PDOException $exception) {
+                $error = $exception-&gt;getCode() === '23000' ? 'اسم المستخدم أو البريد الإلكتروني مستخدم مسبقاً' : 'تعذر إنشاء الحساب حالياً';
+            }
+        }
+    }
+}
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ar" dir="rtl"&gt;&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;&lt;title&gt;إنشاء حساب | Maxlond&lt;/title&gt;&lt;link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&amp;display=swap" rel="stylesheet"&gt;&lt;link rel="stylesheet" href="&lt;?= Security::e(APP_URL) ?&gt;/assets/css/app.css"&gt;&lt;/head&gt;
+&lt;body class="auth-page"&gt;
+&lt;aside class="auth-aside"&gt;&lt;a class="brand-lockup" href="&lt;?= Security::e(APP_URL) ?&gt;"&gt;&lt;span class="brand-mark"&gt;ML&lt;/span&gt;&lt;span&gt;&lt;strong&gt;Maxlond&lt;/strong&gt;&lt;small&gt;إدارة المشاريع المدنية&lt;/small&gt;&lt;/span&gt;&lt;/a&gt;&lt;div&gt;&lt;h1&gt;ابدأ من موقعك&lt;br&gt;وابقَ على اطلاع&lt;/h1&gt;&lt;p&gt;أنشئ حساب مهندس لإدارة المهام اليومية ومتابعة تقارير مواقع العمل.&lt;/p&gt;&lt;/div&gt;&lt;small&gt;يتم تفعيل الحساب بعد موافقة الإدارة&lt;/small&gt;&lt;/aside&gt;
+&lt;main class="auth-form-area"&gt;&lt;section class="auth-card"&gt;
+&lt;h2&gt;إنشاء حساب مهندس&lt;/h2&gt;&lt;p&gt;أدخل بياناتك لإرسال طلب التسجيل&lt;/p&gt;
+&lt;?php if ($success): ?&gt;
+&lt;div class="alert alert-success"&gt;تم إرسال طلبك إلى الإدارة. يمكنك تسجيل الدخول بعد الموافقة.&lt;/div&gt;
+&lt;a class="btn btn-primary" href="&lt;?= Security::e(APP_URL) ?&gt;/login.php"&gt;العودة لتسجيل الدخول&lt;/a&gt;
+&lt;?php else: ?&gt;
+&lt;?php if ($error !== ''): ?&gt;&lt;div class="alert alert-error"&gt;&lt;?= Security::e($error) ?&gt;&lt;/div&gt;&lt;?php endif; ?&gt;
+&lt;form method="post"&gt;&lt;?= Security::csrfField() ?&gt;
+&lt;div class="field"&gt;&lt;label&gt;الاسم الكامل&lt;/label&gt;&lt;input name="full_name" required maxlength="150" value="&lt;?= Security::e($_POST['full_name'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;اسم المستخدم&lt;/label&gt;&lt;input name="username" required minlength="3" maxlength="80" pattern="[a-zA-Z0-9_.-]+" value="&lt;?= Security::e($_POST['username'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;البريد الإلكتروني&lt;/label&gt;&lt;input name="email" type="email" required maxlength="150" value="&lt;?= Security::e($_POST['email'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;رقم الهاتف&lt;/label&gt;&lt;input name="phone" maxlength="30" value="&lt;?= Security::e($_POST['phone'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;التخصص&lt;/label&gt;&lt;input name="specialization" maxlength="100" value="&lt;?= Security::e($_POST['specialization'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;كلمة المرور (10 أحرف على الأقل)&lt;/label&gt;&lt;input name="password" type="password" required minlength="10" autocomplete="new-password"&gt;&lt;/div&gt;
+&lt;button class="btn btn-primary" type="submit"&gt;إرسال طلب التسجيل&lt;/button&gt;&lt;/form&gt;
+&lt;div class="auth-note"&gt;&lt;a href="&lt;?= Security::e(APP_URL) ?&gt;/login.php"&gt;لديك حساب؟ تسجيل الدخول&lt;/a&gt;&lt;/div&gt;
+&lt;?php endif; ?&gt;
+&lt;/section&gt;&lt;/main&gt;&lt;script src="&lt;?= Security::e(APP_URL) ?&gt;/assets/js/app.js"&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;</pre>
+    </section>
+
+    <!-- ==================== logout.php ==================== -->
+    <section class="card" id="logout">
+      <h2><span>🚪 logout.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-logout">📋 نسخ</button></div>
+<pre class="code" id="code-logout">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/auth.php';
+
+Auth::logout();
+header('Location: ' . APP_URL . '/login.php');
+exit;</pre>
+    </section>
+
+    <!-- ==================== index.php ==================== -->
+    <section class="card" id="index">
+      <h2><span>🏠 index.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-index">📋 نسخ</button></div>
+<pre class="code" id="code-index">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/auth.php';
+
+if (!Auth::check()) {
+    header('Location: ' . APP_URL . '/login.php');
+    exit;
+}
+$destination = match (Auth::role()) {'admin'=&gt;'admin/dashboard.php','accountant'=&gt;'admin/financial.php',default=&gt;'engineer/dashboard.php'};
+header('Location: ' . APP_URL . '/' . $destination);
+exit;</pre>
+    </section>
+
+    <!-- ==================== dashboard.php ==================== -->
+    <section class="card" id="dash">
+      <h2><span>📊 admin/dashboard.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="file-meta"><b>📁 admin/dashboard.php</b> · <span>لوحة التحكم الرئيسية للمدير</span></div>
+      <div class="copy-row"><button class="btn" data-copy="code-dash">📋 نسخ</button></div>
+<pre class="code" id="code-dash">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../database.php';
+require_once __DIR__ . '/../security.php';
+require_once __DIR__ . '/../auth.php';
+require_once __DIR__ . '/../helpers.php';
+Auth::requireRole('admin');
+
+$stats = [];
+$stats['sites'] = (int) db()-&gt;query("SELECT COUNT(*) FROM sites WHERE status IN ('planning','active','paused')")-&gt;fetchColumn();
+$stats['engineers'] = (int) db()-&gt;query("SELECT COUNT(*) FROM users WHERE role = 'engineer' AND is_active = 1 AND approval_status = 'approved'")-&gt;fetchColumn();
+$stats['machinery'] = (int) db()-&gt;query("SELECT COUNT(*) FROM machinery WHERE status &lt;&gt; 'out_of_service'")-&gt;fetchColumn();
+$stats['pending_reports'] = (int) db()-&gt;query("SELECT COUNT(*) FROM site_daily_reports WHERE status = 'submitted'")-&gt;fetchColumn();
+$accountValues = db()-&gt;query("SELECT code, type, balance FROM accounts WHERE code='1100' OR type IN ('revenue','expense')")-&gt;fetchAll();
+$balances = [];
+foreach ($accountValues as $account) {
+    if ($account['code'] === '1100') $balances['1100'] = (float) $account['balance'];
+    if ($account['type'] === 'revenue' || $account['type'] === 'expense') {
+        $balances[(string) $account['type']] = ($balances[(string) $account['type']] ?? 0.0) + (float) $account['balance'];
+    }
+}
+$stats['cash'] = $balances['1100'] ?? 0.0;
+$stats['revenue'] = $balances['revenue'] ?? 0.0;
+$stats['expenses'] = $balances['expense'] ?? 0.0;
+$stats['inventory'] = (float) db()-&gt;query('SELECT COALESCE(SUM(quantity * unit_price), 0) FROM warehouse_items WHERE is_active = 1')-&gt;fetchColumn();
+$stats['open_repairs'] = (int) db()-&gt;query("SELECT COUNT(*) FROM machinery_repairs WHERE status IN ('pending','in_progress','waiting_parts')")-&gt;fetchColumn();
+$stats['low_stock'] = (int) db()-&gt;query('SELECT COUNT(*) FROM warehouse_items WHERE is_active = 1 AND quantity &lt;= min_quantity')-&gt;fetchColumn();
+$stats['today_entries'] = (int) db()-&gt;query("SELECT COUNT(*) FROM journal_entries WHERE entry_date = CURRENT_DATE() AND status = 'posted'")-&gt;fetchColumn();
+
+$recentReports = db()-&gt;query('SELECT r.id, r.report_date, r.status, r.progress_percent, s.name AS site_name, u.full_name FROM site_daily_reports r JOIN sites s ON s.id = r.site_id JOIN users u ON u.id = r.engineer_id ORDER BY r.created_at DESC LIMIT 5')-&gt;fetchAll();
+$recentTasks = db()-&gt;query('SELECT p.id, p.title, p.status, p.progress, s.name AS site_name, u.full_name FROM work_plans p JOIN sites s ON s.id = p.site_id LEFT JOIN users u ON u.id = p.assigned_to ORDER BY p.updated_at DESC LIMIT 5')-&gt;fetchAll();
+$recentUpdates = db()-&gt;query('SELECT x.note, x.new_progress, x.new_status, x.created_at, p.title, u.full_name FROM work_plan_updates x JOIN work_plans p ON p.id = x.work_plan_id JOIN users u ON u.id = x.engineer_id ORDER BY x.created_at DESC LIMIT 6')-&gt;fetchAll();
+
+$todayProgress = [];
+$todayReports = db()-&gt;query("SELECT r.engineer_id,u.full_name,AVG(r.progress_percent) AS average_progress,COUNT(*) AS activity_count FROM site_daily_reports r JOIN users u ON u.id=r.engineer_id WHERE r.report_date=CURRENT_DATE() AND r.status IN ('submitted','approved') GROUP BY r.engineer_id,u.full_name")-&gt;fetchAll();
+$todayUpdates = db()-&gt;query("SELECT x.engineer_id,u.full_name,AVG(x.new_progress) AS average_progress,COUNT(*) AS activity_count,SUM(x.new_status='done') AS completed_tasks FROM work_plan_updates x JOIN users u ON u.id=x.engineer_id WHERE x.created_at&gt;=CURRENT_DATE() AND x.created_at&lt;DATE_ADD(CURRENT_DATE(),INTERVAL 1 DAY) GROUP BY x.engineer_id,u.full_name")-&gt;fetchAll();
+foreach ([$todayReports, $todayUpdates] as $activityRows) {
+    foreach ($activityRows as $activity) {
+        $engineerId = (int) $activity['engineer_id'];
+        if (!isset($todayProgress[$engineerId])) $todayProgress[$engineerId] = ['name'=&gt;$activity['full_name'],'progress_total'=&gt;0.0,'activity_count'=&gt;0,'completed_tasks'=&gt;0];
+        $count = (int) $activity['activity_count'];
+        $todayProgress[$engineerId]['progress_total'] += (float) $activity['average_progress'] * $count;
+        $todayProgress[$engineerId]['activity_count'] += $count;
+        $todayProgress[$engineerId]['completed_tasks'] += (int) ($activity['completed_tasks'] ?? 0);
+    }
+}
+foreach ($todayProgress as &amp;$activity) $activity['score'] = $activity['activity_count'] ? round($activity['progress_total'] / $activity['activity_count']) : 0;
+unset($activity);
+usort($todayProgress, static fn(array $left, array $right): int =&gt; ($right['score'] &lt;=&gt; $left['score']) ?: ($right['activity_count'] &lt;=&gt; $left['activity_count']));
+$topToday = array_slice($todayProgress, 0, 7);
+$pageTitle = 'لوحة التحكم';
+require __DIR__ . '/../header.php';
+?&gt;
+&lt;main class="main-content"&gt;&lt;div class="page-wrap"&gt;
+    &lt;div class="page-header"&gt;&lt;div&gt;&lt;h1&gt;لوحة التحكم&lt;/h1&gt;&lt;p&gt;ملخص العمليات والموقف المالي للمشاريع&lt;/p&gt;&lt;/div&gt;&lt;span class="pill info"&gt;&lt;?= Security::e(date('l، d F Y')) ?&gt;&lt;/span&gt;&lt;/div&gt;
+    &lt;section class="grid-stats"&gt;
+        &lt;?php foreach ([['المواقع النشطة', $stats['sites'], 'pin', 'cyan'], ['المهندسون', $stats['engineers'], 'users', 'green'], ['الآليات', $stats['machinery'], 'truck', 'amber'], ['تقارير بانتظار المراجعة', $stats['pending_reports'], 'clipboard', 'red']] as [$label, $value, $symbol, $tone]): ?&gt;
+        &lt;article class="stat-card" style="--accent:var(--&lt;?= $tone ?&gt;);--tint:var(--&lt;?= $tone ?&gt;-pale)"&gt;&lt;div class="stat-top"&gt;&lt;span&gt;&lt;?= Security::e($label) ?&gt;&lt;/span&gt;&lt;span class="stat-icon"&gt;&lt;?= icon($symbol) ?&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class="stat-value"&gt;&lt;?= number_format((int) $value) ?&gt;&lt;/div&gt;&lt;div class="stat-sub"&gt;حتى &lt;?= Security::e(date('H:i')) ?&gt;&lt;/div&gt;&lt;/article&gt;
+        &lt;?php endforeach; ?&gt;
+    &lt;/section&gt;
+    &lt;section class="grid-stats"&gt;
+        &lt;?php foreach ([['النقدية', $stats['cash'], 'wallet'], ['الإيرادات', $stats['revenue'], 'chart'], ['المصروفات', $stats['expenses'], 'book'], ['قيمة المخزون', $stats['inventory'], 'box']] as [$label, $value, $symbol]): ?&gt;
+        &lt;article class="stat-card"&gt;&lt;div class="stat-top"&gt;&lt;span&gt;&lt;?= Security::e($label) ?&gt;&lt;/span&gt;&lt;span class="stat-icon"&gt;&lt;?= icon($symbol) ?&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class="stat-value" style="font-size:21px"&gt;&lt;?= Security::e(money($value)) ?&gt;&lt;/div&gt;&lt;div class="stat-sub"&gt;دينار عراقي&lt;/div&gt;&lt;/article&gt;
+        &lt;?php endforeach; ?&gt;
+    &lt;/section&gt;
+    &lt;section class="grid-3" style="margin-bottom:19px"&gt;
+        &lt;a class="quick-link" href="&lt;?= Security::e(pageUrl('admin/repairs.php')) ?&gt;"&gt;&lt;span class="stat-icon"&gt;&lt;?= icon('tool') ?&gt;&lt;/span&gt;&lt;span&gt;تصليحات مفتوحة &lt;strong&gt;&lt;?= $stats['open_repairs'] ?&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/a&gt;
+        &lt;a class="quick-link" href="&lt;?= Security::e(pageUrl('admin/warehouse_items.php?filter=low')) ?&gt;"&gt;&lt;span class="stat-icon"&gt;&lt;?= icon('box') ?&gt;&lt;/span&gt;&lt;span&gt;مواد وصلت للحد الأدنى &lt;strong&gt;&lt;?= $stats['low_stock'] ?&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/a&gt;
+        &lt;a class="quick-link" href="&lt;?= Security::e(pageUrl('admin/journal.php')) ?&gt;"&gt;&lt;span class="stat-icon"&gt;&lt;?= icon('book') ?&gt;&lt;/span&gt;&lt;span&gt;قيود اليوم &lt;strong&gt;&lt;?= $stats['today_entries'] ?&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/a&gt;
+    &lt;/section&gt;
+    &lt;section class="grid-2" style="margin-bottom:19px"&gt;
+        &lt;div class="panel"&gt;&lt;h2 class="panel-title"&gt;إنجاز المهندسين اليوم&lt;/h2&gt;&lt;canvas id="engineerTodayChart" height="145"&gt;&lt;/canvas&gt;&lt;/div&gt;
+        &lt;div class="table-panel"&gt;&lt;div class="table-toolbar"&gt;&lt;h2&gt;تقييم الإنجاز اليومي&lt;/h2&gt;&lt;/div&gt;&lt;div class="table-wrapper table-cards"&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&lt;th&gt;المهندس&lt;/th&gt;&lt;th&gt;التقييم&lt;/th&gt;&lt;th&gt;الأنشطة&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;?php foreach ($topToday as $index =&gt; $activity): ?&gt;&lt;tr&gt;&lt;td data-label="#"&gt;&lt;?= $index + 1 ?&gt;&lt;/td&gt;&lt;td data-label="المهندس"&gt;&lt;?= Security::e($activity['name']) ?&gt;&lt;/td&gt;&lt;td data-label="التقييم"&gt;&lt;span class="pill &lt;?= $index === 0 ? 'success' : 'info' ?&gt;"&gt;&lt;?= (int) $activity['score'] ?&gt;%&lt;/span&gt;&lt;/td&gt;&lt;td data-label="الأنشطة"&gt;&lt;?= (int) $activity['activity_count'] ?&gt;&lt;/td&gt;&lt;/tr&gt;&lt;?php endforeach; ?&gt;&lt;?php if ($topToday === []): ?&gt;&lt;tr&gt;&lt;td colspan="4" class="empty-state"&gt;لا توجد بيانات لهذا اليوم&lt;/td&gt;&lt;/tr&gt;&lt;?php endif; ?&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;/section&gt;
+    &lt;section class="grid-2"&gt;
+        &lt;div class="table-panel"&gt;&lt;div class="table-toolbar"&gt;&lt;h2&gt;آخر التقارير&lt;/h2&gt;&lt;a class="btn btn-quiet btn-sm" href="&lt;?= Security::e(pageUrl('admin/reports.php')) ?&gt;"&gt;عرض الكل&lt;/a&gt;&lt;/div&gt;&lt;div class="table-wrapper table-cards"&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;الموقع&lt;/th&gt;&lt;th&gt;المهندس&lt;/th&gt;&lt;th&gt;التاريخ&lt;/th&gt;&lt;th&gt;الحالة&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;?php foreach ($recentReports as $row): ?&gt;&lt;tr&gt;&lt;td data-label="الموقع"&gt;&lt;?= Security::e($row['site_name']) ?&gt;&lt;/td&gt;&lt;td data-label="المهندس"&gt;&lt;?= Security::e($row['full_name']) ?&gt;&lt;/td&gt;&lt;td data-label="التاريخ"&gt;&lt;?= Security::e($row['report_date']) ?&gt;&lt;/td&gt;&lt;td data-label="الحالة"&gt;&lt;span class="pill &lt;?= $row['status'] === 'approved' ? 'success' : ($row['status'] === 'submitted' ? 'warning' : '') ?&gt;"&gt;&lt;?= Security::e(statusLabel((string) $row['status'])) ?&gt;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;?php endforeach; ?&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;div class="table-panel"&gt;&lt;div class="table-toolbar"&gt;&lt;h2&gt;آخر المهام&lt;/h2&gt;&lt;a class="btn btn-quiet btn-sm" href="&lt;?= Security::e(pageUrl('admin/work_plans.php')) ?&gt;"&gt;عرض الكل&lt;/a&gt;&lt;/div&gt;&lt;div class="table-wrapper table-cards"&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;المهمة&lt;/th&gt;&lt;th&gt;الموقع&lt;/th&gt;&lt;th&gt;المسؤول&lt;/th&gt;&lt;th&gt;التقدم&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;?php foreach ($recentTasks as $row): ?&gt;&lt;tr&gt;&lt;td data-label="المهمة"&gt;&lt;?= Security::e($row['title']) ?&gt;&lt;/td&gt;&lt;td data-label="الموقع"&gt;&lt;?= Security::e($row['site_name']) ?&gt;&lt;/td&gt;&lt;td data-label="المسؤول"&gt;&lt;?= Security::e($row['full_name'] ?? 'غير معين') ?&gt;&lt;/td&gt;&lt;td data-label="التقدم"&gt;&lt;div class="flex items-center gap-2"&gt;&lt;span&gt;&lt;?= (int) $row['progress'] ?&gt;%&lt;/span&gt;&lt;span class="progress"&gt;&lt;span style="width:&lt;?= min(100, (int) $row['progress']) ?&gt;%"&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;?php endforeach; ?&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;/section&gt;
+&lt;/div&gt;&lt;/main&gt;
+&lt;?php if ($topToday !== []): ?&gt;&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;&lt;script&gt;new Chart(document.getElementById('engineerTodayChart'),{type:'bar',data:{labels:&lt;?= json_encode(array_column($topToday,'name'),JSON_UNESCAPED_UNICODE|JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?&gt;,datasets:[{label:'متوسط الإنجاز %',data:&lt;?= json_encode(array_column($topToday,'score')) ?&gt;,backgroundColor:'#13805d',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:100,ticks:{callback:value=&gt;value+'%'}},y:{grid:{display:false}}}}});&lt;/script&gt;&lt;?php endif; ?&gt;
+&lt;?php require __DIR__ . '/../footer.php'; ?&gt;</pre>
+    </section>
+
+    <!-- ==================== sites.php ==================== -->
+    <section class="card" id="sites">
+      <h2><span>📍 admin/sites.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-sites">📋 نسخ</button></div>
+<pre class="code" id="code-sites">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../database.php';
+require_once __DIR__ . '/../security.php';
+require_once __DIR__ . '/../auth.php';
+require_once __DIR__ . '/../helpers.php';
+Auth::requireRole('admin');
+
+$editId = filter_input(INPUT_GET, 'edit', FILTER_VALIDATE_INT) ?: 0;
+$editing = null;
+if ($editId) {
+    $statement = db()-&gt;prepare('SELECT * FROM sites WHERE id = ?');
+    $statement-&gt;execute([$editId]);
+    $editing = $statement-&gt;fetch() ?: null;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Security::requireCsrf();
+    $operation = Security::clean($_POST['op'] ?? '', 20);
+    $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT) ?: 0;
+    if ($operation === 'delete' &amp;&amp; $id) {
+        db()-&gt;prepare('DELETE FROM sites WHERE id = ?')-&gt;execute([$id]);
+        audit('site_deleted', 'site', $id);
+        redirect('admin/sites.php?msg=deleted');
+    }
+    if ($operation === 'save') {
+        $name = Security::clean($_POST['name'] ?? '', 200);
+        if ($name === '') redirect('admin/sites.php?msg=invalid');
+        $data = [$name, Security::clean($_POST['client_name'] ?? '', 200), $_POST['work_date'] ?: null, $_POST['start_time'] ?: null, $_POST['end_time'] ?: null, Security::clean($_POST['location'] ?? '', 255), max(0, (float) ($_POST['budget'] ?? 0)), Security::clean($_POST['status'] ?? 'active', 20), filter_var($_POST['manager_id'] ?? null, FILTER_VALIDATE_INT) ?: null, Security::clean($_POST['description'] ?? '', 5000)];
+        if ($id) {
+            db()-&gt;prepare('UPDATE sites SET name=?, client_name=?, work_date=?, start_time=?, end_time=?, location=?, budget=?, status=?, manager_id=?, description=? WHERE id=?')-&gt;execute(array_merge($data, [$id]));
+            audit('site_updated', 'site', $id);
+        } else {
+            $codeQuery = db()-&gt;prepare("SELECT COALESCE(MAX(CAST(SUBSTRING_INDEX(code, '-', -1) AS UNSIGNED)), 0) FROM sites WHERE code LIKE ?");
+            $codeQuery-&gt;execute(['SP-' . date('Ymd') . '-%']);
+            $nextCode = (int) $codeQuery-&gt;fetchColumn() + 1;
+            $code = 'SP-' . date('Ymd') . '-' . str_pad((string) $nextCode, 3, '0', STR_PAD_LEFT);
+            db()-&gt;prepare('INSERT INTO sites (code, name, client_name, work_date, start_time, end_time, location, budget, status, manager_id, description, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')-&gt;execute(array_merge([$code], $data, [Auth::id()]));
+            audit('site_created', 'site', (int) db()-&gt;lastInsertId());
+        }
+        redirect('admin/sites.php?msg=saved');
+    }
+}
+$engineers = db()-&gt;query("SELECT id, full_name FROM users WHERE role = 'engineer' AND is_active = 1 AND approval_status = 'approved' ORDER BY full_name")-&gt;fetchAll();
+$sites = db()-&gt;query('SELECT s.*, u.full_name AS manager_name FROM sites s LEFT JOIN users u ON u.id=s.manager_id ORDER BY s.created_at DESC')-&gt;fetchAll();
+$pageTitle = 'إدارة المواقع';
+require __DIR__ . '/../header.php';
+?&gt;
+&lt;main class="main-content"&gt;&lt;div class="page-wrap"&gt;
+&lt;div class="page-header"&gt;&lt;div&gt;&lt;h1&gt;المواقع والمشاريع&lt;/h1&gt;&lt;p&gt;إدارة بيانات مواقع العمل والمهندسين المسؤولين&lt;/p&gt;&lt;/div&gt;&lt;a class="btn btn-primary" href="&lt;?= Security::e(pageUrl('admin/sites.php?action=new')) ?&gt;"&gt;&lt;?= icon('plus') ?&gt;موقع جديد&lt;/a&gt;&lt;/div&gt;
+&lt;?php if (isset($_GET['action']) || $editing): ?&gt;
+&lt;section class="panel" style="margin-bottom:20px"&gt;&lt;h2 class="panel-title"&gt;&lt;?= $editing ? 'تعديل الموقع' : 'إنشاء موقع' ?&gt;&lt;/h2&gt;
+&lt;form method="post" class="form-grid"&gt;&lt;?= Security::csrfField() ?&gt;&lt;input type="hidden" name="op" value="save"&gt;&lt;input type="hidden" name="id" value="&lt;?= (int) ($editing['id'] ?? 0) ?&gt;"&gt;
+&lt;div class="field"&gt;&lt;label&gt;اسم الموقع *&lt;/label&gt;&lt;input name="name" required maxlength="200" value="&lt;?= Security::e($editing['name'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;اسم العميل&lt;/label&gt;&lt;input name="client_name" maxlength="200" value="&lt;?= Security::e($editing['client_name'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;تاريخ العمل&lt;/label&gt;&lt;input type="date" name="work_date" value="&lt;?= Security::e($editing['work_date'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;المهندس المسؤول&lt;/label&gt;&lt;select name="manager_id"&gt;&lt;option value=""&gt;غير معين&lt;/option&gt;&lt;?php foreach ($engineers as $engineer): ?&gt;&lt;option value="&lt;?= (int) $engineer['id'] ?&gt;" &lt;?= (int) ($editing['manager_id'] ?? 0) === (int) $engineer['id'] ? 'selected' : '' ?&gt;&gt;&lt;?= Security::e($engineer['full_name']) ?&gt;&lt;/option&gt;&lt;?php endforeach; ?&gt;&lt;/select&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;وقت البدء&lt;/label&gt;&lt;input type="time" name="start_time" value="&lt;?= Security::e($editing['start_time'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;وقت الانتهاء&lt;/label&gt;&lt;input type="time" name="end_time" value="&lt;?= Security::e($editing['end_time'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;الموقع الجغرافي&lt;/label&gt;&lt;input name="location" maxlength="255" value="&lt;?= Security::e($editing['location'] ?? '') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;الميزانية&lt;/label&gt;&lt;input name="budget" type="number" min="0" step="0.01" value="&lt;?= Security::e($editing['budget'] ?? '0') ?&gt;"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;الحالة&lt;/label&gt;&lt;select name="status"&gt;&lt;?php foreach (['planning','active','paused','completed','cancelled'] as $status): ?&gt;&lt;option value="&lt;?= $status ?&gt;" &lt;?= ($editing['status'] ?? 'active') === $status ? 'selected' : '' ?&gt;&gt;&lt;?= Security::e(statusLabel($status)) ?&gt;&lt;/option&gt;&lt;?php endforeach; ?&gt;&lt;/select&gt;&lt;/div&gt;
+&lt;div class="field full"&gt;&lt;label&gt;وصف المشروع&lt;/label&gt;&lt;textarea name="description" maxlength="5000"&gt;&lt;?= Security::e($editing['description'] ?? '') ?&gt;&lt;/textarea&gt;&lt;/div&gt;
+&lt;div class="field full btn-group"&gt;&lt;button class="btn btn-primary" type="submit"&gt;حفظ الموقع&lt;/button&gt;&lt;a class="btn btn-quiet" href="&lt;?= Security::e(pageUrl('admin/sites.php')) ?&gt;"&gt;إلغاء&lt;/a&gt;&lt;/div&gt;
+&lt;/form&gt;&lt;/section&gt;
+&lt;?php endif; ?&gt;
+&lt;section class="grid-3"&gt;
+&lt;?php foreach ($sites as $site): ?&gt;
+&lt;article class="panel"&gt;&lt;div class="flex items-start justify-between gap-3"&gt;&lt;div&gt;&lt;span class="pill info"&gt;&lt;?= Security::e($site['code']) ?&gt;&lt;/span&gt;&lt;h2 class="panel-title" style="margin:10px 0 4px"&gt;&lt;?= Security::e($site['name']) ?&gt;&lt;/h2&gt;&lt;/div&gt;&lt;span class="pill &lt;?= $site['status'] === 'active' ? 'success' : '' ?&gt;"&gt;&lt;?= Security::e(statusLabel((string) $site['status'])) ?&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;p style="margin:4px 0;color:var(--muted);font-size:13px"&gt;العميل: &lt;?= Security::e($site['client_name'] ?: 'غير محدد') ?&gt;&lt;/p&gt;
+&lt;p style="margin:4px 0;color:var(--muted);font-size:13px"&gt;المهندس: &lt;?= Security::e($site['manager_name'] ?: 'غير معين') ?&gt;&lt;/p&gt;
+&lt;p style="margin:4px 0 15px;color:var(--muted);font-size:12px"&gt;&lt;?= Security::e($site['location']) ?&gt;&lt;/p&gt;
+&lt;div class="btn-group"&gt;&lt;a class="btn btn-quiet btn-sm" href="&lt;?= Security::e(pageUrl('admin/sites.php?edit=' . (int) $site['id'])) ?&gt;"&gt;تعديل&lt;/a&gt;
+&lt;form method="post"&gt;&lt;?= Security::csrfField() ?&gt;&lt;input type="hidden" name="op" value="delete"&gt;&lt;input type="hidden" name="id" value="&lt;?= (int) $site['id'] ?&gt;"&gt;&lt;button class="btn btn-danger btn-sm" data-confirm="حذف الموقع؟ سيتم حذف الخطط والتقارير المرتبطة به." type="submit"&gt;حذف&lt;/button&gt;&lt;/form&gt;&lt;/div&gt;
+&lt;/article&gt;
+&lt;?php endforeach; ?&gt;
+&lt;?php if ($sites === []): ?&gt;&lt;div class="panel empty-state"&gt;لم تتم إضافة مواقع بعد&lt;/div&gt;&lt;?php endif; ?&gt;
+&lt;/section&gt;&lt;/div&gt;&lt;/main&gt;
+&lt;?php require __DIR__ . '/../footer.php'; ?&gt;</pre>
+    </section>
+
+    <!-- ==================== users.php ==================== -->
+    <section class="card" id="users">
+      <h2><span>👥 admin/users.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-users">📋 نسخ</button></div>
+<pre class="code" id="code-users">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../database.php';
+require_once __DIR__ . '/../security.php';
+require_once __DIR__ . '/../auth.php';
+require_once __DIR__ . '/../helpers.php';
+Auth::requireRole('admin');
+
+$editId = filter_input(INPUT_GET, 'edit', FILTER_VALIDATE_INT) ?: 0;
+$editing = null;
+if ($editId) {
+    $editQuery = db()-&gt;prepare("SELECT id,full_name,email,phone,specialization FROM users WHERE id=? AND role IN ('engineer','accountant')");
+    $editQuery-&gt;execute([$editId]);
+    $editing = $editQuery-&gt;fetch() ?: null;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Security::requireCsrf();
+    $userId = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT) ?: 0;
+    $operation = Security::clean($_POST['op'] ?? 'toggle', 20);
+    if ($operation === 'create') {
+        $fullName = Security::clean($_POST['full_name'] ?? '', 150);
+        $username = Security::clean($_POST['username'] ?? '', 80);
+        $email = Security::clean($_POST['email'] ?? '', 150);
+        $role = Security::clean($_POST['role'] ?? '', 20);
+        $password = $_POST['password'] ?? null;
+        $phone = Security::clean($_POST['phone'] ?? '', 30);
+        $specialization = Security::clean($_POST['specialization'] ?? '', 100);
+        if ($fullName === '' || !preg_match('/^[A-Za-z0-9_.-]{3,80}$/', $username) || !filter_var($email, FILTER_VALIDATE_EMAIL) || !in_array($role, ['engineer','accountant'], true) || !is_string($password) || strlen($password) &lt; 10 || strlen($password) &gt; 1024) {
+            redirect('admin/users.php?msg=invalid');
+        }
+        $duplicate = db()-&gt;prepare('SELECT COUNT(*) FROM users WHERE username=? OR email=?');
+        $duplicate-&gt;execute([$username,$email]);
+        if ((int) $duplicate-&gt;fetchColumn() &gt; 0) redirect('admin/users.php?msg=user_email_taken');
+        db()-&gt;prepare("INSERT INTO users (full_name,username,email,password_hash,role,phone,specialization,is_active,approval_status) VALUES (?,?,?,?,?,?,?,1,'approved')")
+            -&gt;execute([$fullName,$username,$email,password_hash($password,PASSWORD_DEFAULT),$role,$phone,$specialization]);
+        $newUserId = (int) db()-&gt;lastInsertId();
+        audit('user_created','user',$newUserId,'role='.$role);
+        redirect('admin/users.php?msg=user_created');
+    }
+    if ($operation === 'save' &amp;&amp; $userId) {
+        $fullName = Security::clean($_POST['full_name'] ?? '', 150);
+        $email = Security::clean($_POST['email'] ?? '', 150);
+        $phone = Security::clean($_POST['phone'] ?? '', 30);
+        $specialization = Security::clean($_POST['specialization'] ?? '', 100);
+        if ($fullName === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) redirect('admin/users.php?msg=invalid');
+        $emailCheck = db()-&gt;prepare('SELECT COUNT(*) FROM users WHERE email=? AND id&lt;&gt;?');
+        $emailCheck-&gt;execute([$email, $userId]);
+        if ((int) $emailCheck-&gt;fetchColumn() &gt; 0) redirect('admin/users.php?msg=user_email_taken');
+        $update = db()-&gt;prepare("UPDATE users SET full_name=?,email=?,phone=?,specialization=? WHERE id=? AND role IN ('engineer','accountant')");
+        $update-&gt;execute([$fullName,$email,$phone,$specialization,$userId]);
+        audit('engineer_profile_updated', 'user', $userId);
+        redirect('admin/users.php?msg=user_saved');
+    }
+    if ($operation === 'toggle' &amp;&amp; $userId &amp;&amp; $userId !== Auth::id()) {
+        $statement = db()-&gt;prepare("UPDATE users SET is_active = IF(is_active = 1, 0, 1) WHERE id = ? AND role IN ('engineer','accountant')");
+        $statement-&gt;execute([$userId]);
+        audit('user_status_toggled', 'user', (int) $userId);
+    }
+    redirect('admin/users.php?msg=updated');
+}
+$users = db()-&gt;query('SELECT id, full_name, username, email, phone, specialization, is_active, approval_status, last_login, created_at FROM users ORDER BY role, full_name')-&gt;fetchAll();
+$pageTitle = 'إدارة المستخدمين';
+require __DIR__ . '/../header.php';
+?&gt;
+&lt;main class="main-content"&gt;&lt;div class="page-wrap"&gt;
+&lt;div class="page-header"&gt;&lt;div&gt;&lt;h1&gt;إدارة المستخدمين&lt;/h1&gt;&lt;p&gt;حسابات الإدارة والمهندسين والمحاسبين وصلاحية الدخول&lt;/p&gt;&lt;/div&gt;&lt;div class="btn-group"&gt;&lt;a class="btn btn-primary" href="&lt;?= Security::e(pageUrl('admin/users.php?action=new')) ?&gt;"&gt;إضافة حساب&lt;/a&gt;&lt;a class="btn btn-quiet" href="&lt;?= Security::e(pageUrl('admin/pending_users.php')) ?&gt;"&gt;طلبات التسجيل&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;?php if (isset($_GET['action']) &amp;&amp; !$editing): ?&gt;
+&lt;section class="panel" style="margin-bottom:18px"&gt;&lt;h2 class="panel-title"&gt;إنشاء حساب موظف&lt;/h2&gt;
+&lt;form method="post" class="form-grid"&gt;&lt;?= Security::csrfField() ?&gt;&lt;input type="hidden" name="op" value="create"&gt;
+&lt;div class="field"&gt;&lt;label&gt;الاسم الكامل *&lt;/label&gt;&lt;input name="full_name" required maxlength="150"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;اسم المستخدم *&lt;/label&gt;&lt;input name="username" required minlength="3" maxlength="80" pattern="[A-Za-z0-9_.-]+"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;البريد الإلكتروني *&lt;/label&gt;&lt;input name="email" type="email" required maxlength="150"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;الدور *&lt;/label&gt;&lt;select name="role" required&gt;&lt;option value="engineer"&gt;مهندس موقع&lt;/option&gt;&lt;option value="accountant"&gt;محاسب&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;كلمة مرور مؤقتة *&lt;/label&gt;&lt;input name="password" type="password" required minlength="10" maxlength="1024" autocomplete="new-password"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;رقم الهاتف&lt;/label&gt;&lt;input name="phone" maxlength="30"&gt;&lt;/div&gt;
+&lt;div class="field"&gt;&lt;label&gt;التخصص&lt;/label&gt;&lt;input name="specialization" maxlength="100"&gt;&lt;/div&gt;
+&lt;div class="field full btn-group"&gt;&lt;button class="btn btn-primary"&gt;إنشاء الحساب&lt;/button&gt;&lt;a class="btn btn-quiet" href="&lt;?= Security::e(pageUrl('admin/users.php')) ?&gt;"&gt;إلغاء&lt;/a&gt;&lt;/div&gt;&lt;/form&gt;&lt;/section&gt;
+&lt;?php endif; ?&gt;
+&lt;div class="table-panel"&gt;&lt;div class="table-toolbar"&gt;&lt;h2&gt;جميع الحسابات&lt;/h2&gt;&lt;span class="pill info"&gt;&lt;?= count($users) ?&gt; مستخدم&lt;/span&gt;&lt;/div&gt;
+&lt;div class="table-wrapper table-cards"&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;المستخدم&lt;/th&gt;&lt;th&gt;الدور&lt;/th&gt;&lt;th&gt;التواصل&lt;/th&gt;&lt;th&gt;الحالة&lt;/th&gt;&lt;th&gt;آخر دخول&lt;/th&gt;&lt;th&gt;الإجراء&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;?php foreach ($users as $user): ?&gt;&lt;tr&gt;&lt;td data-label="المستخدم"&gt;&lt;strong&gt;&lt;?= Security::e($user['full_name']) ?&gt;&lt;/strong&gt;&lt;small style="display:block;color:var(--muted)"&gt;&lt;?= Security::e($user['username']) ?&gt; · &lt;?= Security::e($user['email']) ?&gt;&lt;/small&gt;&lt;/td&gt;&lt;td data-label="الدور"&gt;&lt;?= Security::e(['admin'=&gt;'مدير','engineer'=&gt;'مهندس','accountant'=&gt;'محاسب'][$user['role']] ?? $user['role']) ?&gt;&lt;/td&gt;&lt;td data-label="التواصل"&gt;&lt;?= Security::e($user['phone']) ?&gt;&lt;small style="display:block;color:var(--muted)"&gt;&lt;?= Security::e($user['specialization']) ?&gt;&lt;/small&gt;&lt;/td&gt;&lt;td data-label="الحالة"&gt;&lt;span class="pill &lt;?= $user['approval_status'] === 'approved' &amp;&amp; (int) $user['is_active'] ? 'success' : 'warning' ?&gt;"&gt;&lt;?= Security::e(statusLabel((string) $user['approval_status'])) ?&gt;&lt;?= (int) $user['is_active'] ? '' : ' · معطل' ?&gt;&lt;/span&gt;&lt;/td&gt;&lt;td data-label="آخر دخول"&gt;&lt;?= Security::e($user['last_login'] ?: 'لم يسجل الدخول') ?&gt;&lt;/td&gt;&lt;td data-label="الإجراء"&gt;&lt;?php if ($user['role'] !== 'admin'): ?&gt;&lt;div class="btn-group"&gt;&lt;a class="btn btn-quiet btn-sm" href="&lt;?= Security::e(pageUrl('admin/users.php?edit=' . (int) $user['id'])) ?&gt;"&gt;تعديل&lt;/a&gt;&lt;?php if ($user['approval_status'] === 'approved'): ?&gt;&lt;form method="post"&gt;&lt;?= Security::csrfField() ?&gt;&lt;input type="hidden" name="id" value="&lt;?= (int) $user['id'] ?&gt;"&gt;&lt;button class="btn &lt;?= (int) $user['is_active'] ? 'btn-danger' : 'btn-primary' ?&gt; btn-sm" type="submit"&gt;&lt;?= (int) $user['is_active'] ? 'تعطيل' : 'تفعيل' ?&gt;&lt;/button&gt;&lt;/form&gt;&lt;?php endif; ?&gt;&lt;/div&gt;&lt;?php else: ?&gt;&lt;span class="pill"&gt;محمي&lt;/span&gt;&lt;?php endif; ?&gt;&lt;/td&gt;&lt;/tr&gt;&lt;?php endforeach; ?&gt;
+&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/main&gt;
+&lt;?php require __DIR__ . '/../footer.php'; ?&gt;</pre>
+    </section>
+
+    <!-- ==================== reports.php ==================== -->
+    <section class="card" id="reports">
+      <h2><span>📊 admin/reports.php</span> <span class="badge badge-php">PHP</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-reports">📋 نسخ</button></div>
+<pre class="code" id="code-reports">&lt;?php
+declare(strict_types=1);
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../database.php';
+require_once __DIR__ . '/../security.php';
+require_once __DIR__ . '/../auth.php';
+require_once __DIR__ . '/../helpers.php';
+Auth::requireRole('admin');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Security::requireCsrf();
+    $reportId = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+    $decision = Security::clean($_POST['decision'] ?? '', 10);
+    $notes = Security::clean($_POST['admin_notes'] ?? '', 5000);
+    if ($reportId &amp;&amp; in_array($decision, ['approved', 'rejected'], true)) {
+        $pdo = db();
+        $pdo-&gt;beginTransaction();
+        try {
+            $statement = $pdo-&gt;prepare("SELECT r.*, s.name AS site_name FROM site_daily_reports r JOIN sites s ON s.id=r.site_id WHERE r.id=? AND r.status='submitted' FOR UPDATE");
+            $statement-&gt;execute([$reportId]);
+            $report = $statement-&gt;fetch();
+            if (!$report) {
+                $pdo-&gt;rollBack();
+                redirect('admin/reports.php?msg=already_reviewed');
+            }
+            $updated = $pdo-&gt;prepare('UPDATE site_daily_reports SET status=?, admin_notes=?, approved_by=?, approved_at=NOW() WHERE id=? AND status="submitted"');
+            $updated-&gt;execute([$decision, $notes, Auth::id(), $reportId]);
+            if ($decision === 'approved') {
+                $expenseQuery = $pdo-&gt;prepare('SELECT category, SUM(total) AS total FROM report_expenses WHERE report_id=? GROUP BY category');
+                $expenseQuery-&gt;execute([$reportId]);
+                $accountCodes = ['materials'=&gt;'5100','labor'=&gt;'5200','fuel'=&gt;'5300','equipment'=&gt;'5400','transport'=&gt;'5500','other'=&gt;'5600'];
+                $accountQuery = $pdo-&gt;prepare('SELECT id FROM accounts WHERE code=?');
+                $lines = [];
+                $sum = 0.0;
+                foreach ($expenseQuery-&gt;fetchAll() as $expense) {
+                    $amount = round((float) $expense['total'], 2);
+                    if ($amount &lt;= 0) continue;
+                    $accountQuery-&gt;execute([$accountCodes[$expense['category']] ?? '5600']);
+                    $accountId = (int) $accountQuery-&gt;fetchColumn();
+                    if (!$accountId) throw new RuntimeException('حساب المصروفات غير موجود');
+                    $lines[] = ['account_id'=&gt;$accountId,'debit'=&gt;$amount,'credit'=&gt;0,'description'=&gt;'مصروفات تقرير الموقع'];
+                    $sum += $amount;
+                }
+                if ($sum &gt; 0) {
+                    $accountQuery-&gt;execute(['1100']);
+                    $cashId = (int) $accountQuery-&gt;fetchColumn();
+                    if (!$cashId) throw new RuntimeException('حساب النقدية غير موجود');
+                    $lines[] = ['account_id'=&gt;$cashId,'debit'=&gt;0,'credit'=&gt;$sum,'description'=&gt;'صرف مصروفات التقرير'];
+                    createJournalEntry('مصروفات التقرير اليومي · ' . $report['site_name'], $lines, (int) Auth::id(), (int) $report['site_id'], $reportId, 'report-' . $reportId);
+                }
+            }
+            $pdo-&gt;commit();
+        } catch (Throwable $exception) {
+            if ($pdo-&gt;inTransaction()) $pdo-&gt;rollBack();
+            error_log('Maxlond report review: ' . $exception-&gt;getMessage());
+            redirect('admin/reports.php?msg=review_failed');
+        }
+        if ($report) {
+            notify((int) $report['engineer_id'], $decision === 'approved' ? 'تم اعتماد التقرير' : 'تم رفض التقرير', $report['site_name'] . ($notes !== '' ? ' · ' . $notes : ''), $decision === 'approved' ? 'success' : 'danger', 'engineer/dashboard.php');
+            audit('report_' . $decision, 'report', $reportId);
+        }
+    }
+    redirect('admin/reports.php?msg=updated');
+}
+$status = Security::clean($_GET['status'] ?? '', 20);
+$allowedStatus = ['submitted','approved','rejected','draft'];
+$query = 'SELECT r.*, s.name AS site_name, u.full_name FROM site_daily_reports r JOIN sites s ON s.id=r.site_id JOIN users u ON u.id=r.engineer_id';
+if (in_array($status, $allowedStatus, true)) {
+    $statement = db()-&gt;prepare($query . ' WHERE r.status=? ORDER BY r.report_date DESC, r.created_at DESC');
+    $statement-&gt;execute([$status]);
+    $reports = $statement-&gt;fetchAll();
+} else {
+    $reports = db()-&gt;query($query . ' ORDER BY r.report_date DESC, r.created_at DESC LIMIT 200')-&gt;fetchAll();
+}
+$pageTitle = 'التقارير اليومية';
+require __DIR__ . '/../header.php';
+?&gt;
+&lt;main class="main-content"&gt;&lt;div class="page-wrap"&gt;
+&lt;div class="page-header"&gt;&lt;div&gt;&lt;h1&gt;التقارير اليومية&lt;/h1&gt;&lt;p&gt;مراجعة واعتماد تقارير المهندسين والمصروفات&lt;/p&gt;&lt;/div&gt;&lt;div class="btn-group"&gt;&lt;a class="btn btn-primary" href="&lt;?= Security::e(pageUrl('admin/export.php?type=reports')) ?&gt;"&gt;تنزيل تقارير Excel&lt;/a&gt;&lt;form method="get" class="flex gap-2"&gt;&lt;select name="status"&gt;&lt;option value=""&gt;كل الحالات&lt;/option&gt;&lt;?php foreach ($allowedStatus as $option): ?&gt;&lt;option value="&lt;?= $option ?&gt;" &lt;?= $status === $option ? 'selected' : '' ?&gt;&gt;&lt;?= Security::e(statusLabel($option)) ?&gt;&lt;/option&gt;&lt;?php endforeach; ?&gt;&lt;/select&gt;&lt;button class="btn btn-quiet"&gt;تصفية&lt;/button&gt;&lt;/form&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class="table-panel"&gt;&lt;div class="table-wrapper table-cards"&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;التاريخ والموقع&lt;/th&gt;&lt;th&gt;المهندس&lt;/th&gt;&lt;th&gt;الإنجاز&lt;/th&gt;&lt;th&gt;العمال / الآليات&lt;/th&gt;&lt;th&gt;الحالة&lt;/th&gt;&lt;th&gt;ملخص العمل&lt;/th&gt;&lt;th&gt;المراجعة&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;?php foreach ($reports as $report): ?&gt;&lt;tr&gt;&lt;td data-label="التاريخ والموقع"&gt;&lt;?= Security::e($report['report_date']) ?&gt;&lt;small style="display:block;color:var(--muted)"&gt;&lt;?= Security::e($report['site_name']) ?&gt;&lt;/small&gt;&lt;/td&gt;&lt;td data-label="المهندس"&gt;&lt;?= Security::e($report['full_name']) ?&gt;&lt;/td&gt;&lt;td data-label="الإنجاز"&gt;&lt;?= (int) $report['progress_percent'] ?&gt;%&lt;/td&gt;&lt;td data-label="العمال / الآليات"&gt;&lt;?= (int) $report['workers_count'] ?&gt; / &lt;?= (int) $report['machinery_count'] ?&gt;&lt;/td&gt;&lt;td data-label="الحالة"&gt;&lt;span class="pill &lt;?= $report['status'] === 'approved' ? 'success' : ($report['status'] === 'submitted' ? 'warning' : '') ?&gt;"&gt;&lt;?= Security::e(statusLabel((string) $report['status'])) ?&gt;&lt;/span&gt;&lt;/td&gt;&lt;td data-label="ملخص العمل"&gt;&lt;?= Security::e($report['work_done']) ?&gt;&lt;/td&gt;&lt;td data-label="المراجعة"&gt;&lt;div class="grid gap-2"&gt;&lt;a class="btn btn-quiet btn-sm" href="&lt;?= Security::e(pageUrl('admin/report_view.php?id=' . (int) $report['id'])) ?&gt;"&gt;معاينة التقرير&lt;/a&gt;&lt;?php if ($report['status'] === 'submitted'): ?&gt;&lt;form method="post" class="grid gap-2"&gt;&lt;?= Security::csrfField() ?&gt;&lt;input type="hidden" name="id" value="&lt;?= (int) $report['id'] ?&gt;"&gt;&lt;input name="admin_notes" maxlength="5000" placeholder="ملاحظات المدير"&gt;&lt;div class="btn-group"&gt;&lt;button class="btn btn-primary btn-sm" name="decision" value="approved"&gt;اعتماد&lt;/button&gt;&lt;button class="btn btn-danger btn-sm" name="decision" value="rejected"&gt;رفض&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;&lt;?php else: ?&gt;&lt;?= Security::e($report['admin_notes']) ?&gt;&lt;?php endif; ?&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;?php endforeach; ?&gt;&lt;?php if ($reports === []): ?&gt;&lt;tr&gt;&lt;td colspan="7" class="empty-state"&gt;لا توجد تقارير ضمن هذا الاختيار&lt;/td&gt;&lt;/tr&gt;&lt;?php endif; ?&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/main&gt;
+&lt;?php require __DIR__ . '/../footer.php'; ?&gt;</pre>
+    </section>
+
+    <!-- ==================== database.sql ==================== -->
+    <section class="card" id="dbsql">
+      <h2><span>🗄️ database.sql</span> <span class="badge badge-sql">SQL</span></h2>
+      <div class="file-meta"><b>📁 database.sql</b> · <span>بنية قاعدة البيانات الكاملة + البيانات الأولية</span></div>
+      <div class="callout warning">⚠️ هذا الملف يحتوي على <code>DROP TABLE</code> — لا تستورده على قاعدة بيانات تحتوي بيانات!</div>
+      <div class="copy-row"><button class="btn" data-copy="code-dbsql">📋 نسخ</button></div>
+<pre class="code" id="code-dbsql">SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
+SET time_zone = '+03:00';
+
+-- users
+CREATE TABLE `users` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `full_name` VARCHAR(150) NOT NULL,
+    `username` VARCHAR(80) NOT NULL UNIQUE,
+    `email` VARCHAR(150) NOT NULL UNIQUE,
+    `password_hash` VARCHAR(255) NOT NULL,
+    `role` ENUM('admin','engineer','accountant') NOT NULL DEFAULT 'engineer',
+    `phone` VARCHAR(30) DEFAULT NULL,
+    `specialization` VARCHAR(100) DEFAULT NULL,
+    `signature_path` VARCHAR(255) DEFAULT NULL,
+    `is_active` TINYINT(1) DEFAULT 1,
+    `approval_status` ENUM('pending','approved','rejected') DEFAULT 'pending',
+    `last_login` DATETIME DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- device_fingerprints
+CREATE TABLE `device_fingerprints` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `fingerprint_hash` VARCHAR(128) NOT NULL,
+    `user_agent` VARCHAR(500) DEFAULT NULL,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `first_seen` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_seen` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY `uniq_user_fp` (`user_id`, `fingerprint_hash`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- sites
+CREATE TABLE `sites` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `code` VARCHAR(50) NOT NULL UNIQUE,
+    `name` VARCHAR(200) NOT NULL,
+    `client_name` VARCHAR(200) DEFAULT NULL,
+    `work_date` DATE DEFAULT NULL,
+    `start_time` TIME DEFAULT NULL,
+    `end_time` TIME DEFAULT NULL,
+    `location` VARCHAR(255) DEFAULT NULL,
+    `budget` DECIMAL(15,2) DEFAULT 0,
+    `status` ENUM('planning','active','paused','completed','cancelled') DEFAULT 'active',
+    `manager_id` INT UNSIGNED DEFAULT NULL,
+    `description` TEXT,
+    `created_by` INT UNSIGNED DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`manager_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- machinery
+CREATE TABLE `machinery` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `code` VARCHAR(50) NOT NULL UNIQUE,
+    `name` VARCHAR(200) NOT NULL,
+    `plate_number` VARCHAR(50) DEFAULT NULL,
+    `operator_name` VARCHAR(150) DEFAULT NULL,
+    `status` ENUM('available','in_use','maintenance','out_of_service') DEFAULT 'available',
+    `hourly_cost` DECIMAL(10,2) DEFAULT 0,
+    `notes` TEXT,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- work_plans
+CREATE TABLE `work_plans` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `site_id` INT UNSIGNED NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` TEXT,
+    `assigned_to` INT UNSIGNED DEFAULT NULL,
+    `is_broadcast` TINYINT(1) DEFAULT 0,
+    `priority` ENUM('low','medium','high','urgent') DEFAULT 'medium',
+    `status` ENUM('pending','in_progress','review','done','cancelled') DEFAULT 'pending',
+    `progress` TINYINT UNSIGNED DEFAULT 0,
+    `created_by` INT UNSIGNED DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`site_id`) REFERENCES `sites`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`assigned_to`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- work_plan_updates
+CREATE TABLE `work_plan_updates` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `work_plan_id` INT UNSIGNED NOT NULL,
+    `engineer_id` INT UNSIGNED NOT NULL,
+    `old_progress` TINYINT UNSIGNED DEFAULT NULL,
+    `new_progress` TINYINT UNSIGNED DEFAULT NULL,
+    `old_status` VARCHAR(30) DEFAULT NULL,
+    `new_status` VARCHAR(30) DEFAULT NULL,
+    `note` TEXT,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`work_plan_id`) REFERENCES `work_plans`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`engineer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- site_daily_reports
+CREATE TABLE `site_daily_reports` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `site_id` INT UNSIGNED NOT NULL,
+    `report_date` DATE NOT NULL,
+    `engineer_id` INT UNSIGNED NOT NULL,
+    `weather` VARCHAR(80) DEFAULT NULL,
+    `temperature` DECIMAL(5,2) DEFAULT NULL,
+    `workers_count` INT UNSIGNED DEFAULT 0,
+    `machinery_count` INT UNSIGNED DEFAULT 0,
+    `work_done` TEXT,
+    `issues` TEXT,
+    `materials_used` TEXT,
+    `safety_notes` TEXT,
+    `progress_percent` TINYINT UNSIGNED DEFAULT 0,
+    `status` ENUM('draft','submitted','approved','rejected') DEFAULT 'draft',
+    `admin_notes` TEXT,
+    `approved_by` INT UNSIGNED DEFAULT NULL,
+    `approved_at` DATETIME DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY `uniq_report` (`site_id`, `report_date`, `engineer_id`),
+    FOREIGN KEY (`site_id`) REFERENCES `sites`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`engineer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- report_expenses
+CREATE TABLE `report_expenses` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `report_id` INT UNSIGNED NOT NULL,
+    `item_name` VARCHAR(200) NOT NULL,
+    `category` ENUM('materials','labor','fuel','equipment','transport','other') DEFAULT 'materials',
+    `quantity` DECIMAL(12,3) DEFAULT 1,
+    `unit_price` DECIMAL(15,2) DEFAULT 0,
+    `total` DECIMAL(15,2) DEFAULT 0,
+    `notes` VARCHAR(500) DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`report_id`) REFERENCES `site_daily_reports`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- report_receipts
+CREATE TABLE `report_receipts` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `report_id` INT UNSIGNED NOT NULL,
+    `file_path` VARCHAR(500) NOT NULL,
+    `original_name` VARCHAR(255) DEFAULT NULL,
+    `file_type` VARCHAR(50) DEFAULT NULL,
+    `file_size` INT UNSIGNED DEFAULT NULL,
+    `uploaded_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`report_id`) REFERENCES `site_daily_reports`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- warehouse_categories
+CREATE TABLE `warehouse_categories` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL,
+    `description` VARCHAR(500) DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- warehouse_items
+CREATE TABLE `warehouse_items` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `code` VARCHAR(50) NOT NULL UNIQUE,
+    `name` VARCHAR(200) NOT NULL,
+    `category_id` INT UNSIGNED DEFAULT NULL,
+    `unit` VARCHAR(30) DEFAULT 'قطعة',
+    `quantity` DECIMAL(15,3) DEFAULT 0,
+    `min_quantity` DECIMAL(15,3) DEFAULT 0,
+    `unit_price` DECIMAL(15,2) DEFAULT 0,
+    `location` VARCHAR(100) DEFAULT NULL,
+    `notes` TEXT,
+    `is_active` TINYINT(1) DEFAULT 1,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`category_id`) REFERENCES `warehouse_categories`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- warehouse_transactions
+CREATE TABLE `warehouse_transactions` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `item_id` INT UNSIGNED NOT NULL,
+    `type` ENUM('in','out','adjust') NOT NULL,
+    `quantity` DECIMAL(15,3) NOT NULL,
+    `unit_price` DECIMAL(15,2) DEFAULT 0,
+    `total_price` DECIMAL(15,2) DEFAULT 0,
+    `site_id` INT UNSIGNED DEFAULT NULL,
+    `supplier` VARCHAR(200) DEFAULT NULL,
+    `invoice_number` VARCHAR(100) DEFAULT NULL,
+    `reason` VARCHAR(500) DEFAULT NULL,
+    `created_by` INT UNSIGNED NOT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`item_id`) REFERENCES `warehouse_items`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`site_id`) REFERENCES `sites`(`id`) ON DELETE SET NULL,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- machinery_repairs
+CREATE TABLE `machinery_repairs` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `machinery_id` INT UNSIGNED NOT NULL,
+    `title` VARCHAR(200) NOT NULL,
+    `description` TEXT,
+    `problem_type` ENUM('mechanical','electrical','body','tires','other') DEFAULT 'mechanical',
+    `status` ENUM('pending','in_progress','waiting_parts','completed','cancelled') DEFAULT 'pending',
+    `priority` ENUM('low','medium','high','urgent') DEFAULT 'medium',
+    `technician_name` VARCHAR(150) DEFAULT NULL,
+    `workshop` VARCHAR(200) DEFAULT NULL,
+    `labor_cost` DECIMAL(15,2) DEFAULT 0,
+    `parts_cost` DECIMAL(15,2) DEFAULT 0,
+    `total_cost` DECIMAL(15,2) DEFAULT 0,
+    `reported_by` INT UNSIGNED NOT NULL,
+    `started_at` DATETIME DEFAULT NULL,
+    `completed_at` DATETIME DEFAULT NULL,
+    `notes` TEXT,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`machinery_id`) REFERENCES `machinery`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`reported_by`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- machinery_repair_parts
+CREATE TABLE `machinery_repair_parts` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `repair_id` INT UNSIGNED NOT NULL,
+    `part_name` VARCHAR(200) NOT NULL,
+    `quantity` DECIMAL(10,2) DEFAULT 1,
+    `unit_price` DECIMAL(15,2) DEFAULT 0,
+    `total` DECIMAL(15,2) DEFAULT 0,
+    FOREIGN KEY (`repair_id`) REFERENCES `machinery_repairs`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- accounts
+CREATE TABLE `accounts` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `code` VARCHAR(50) NOT NULL UNIQUE,
+    `name` VARCHAR(200) NOT NULL,
+    `type` ENUM('asset','liability','equity','revenue','expense') NOT NULL,
+    `parent_id` INT UNSIGNED DEFAULT NULL,
+    `balance` DECIMAL(15,2) DEFAULT 0,
+    `description` VARCHAR(500) DEFAULT NULL,
+    `is_active` TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- journal_entries
+CREATE TABLE `journal_entries` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `entry_number` VARCHAR(50) NOT NULL UNIQUE,
+    `entry_date` DATE NOT NULL,
+    `description` VARCHAR(500) NOT NULL,
+    `reference` VARCHAR(100) DEFAULT NULL,
+    `site_id` INT UNSIGNED DEFAULT NULL,
+    `report_id` INT UNSIGNED DEFAULT NULL,
+    `total_debit` DECIMAL(15,2) DEFAULT 0,
+    `total_credit` DECIMAL(15,2) DEFAULT 0,
+    `status` ENUM('draft','posted','cancelled') DEFAULT 'posted',
+    `signature_hash` VARCHAR(255) DEFAULT NULL,
+    `signed_by` INT UNSIGNED DEFAULT NULL,
+    `signed_at` DATETIME DEFAULT NULL,
+    `created_by` INT UNSIGNED NOT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`site_id`) REFERENCES `sites`(`id`) ON DELETE SET NULL,
+    FOREIGN KEY (`signed_by`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- journal_entry_lines
+CREATE TABLE `journal_entry_lines` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `entry_id` INT UNSIGNED NOT NULL,
+    `account_id` INT UNSIGNED NOT NULL,
+    `debit` DECIMAL(15,2) DEFAULT 0,
+    `credit` DECIMAL(15,2) DEFAULT 0,
+    `description` VARCHAR(500) DEFAULT NULL,
+    FOREIGN KEY (`entry_id`) REFERENCES `journal_entries`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- notifications
+CREATE TABLE `notifications` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `message` TEXT,
+    `type` ENUM('info','success','warning','danger') DEFAULT 'info',
+    `link` VARCHAR(255) DEFAULT NULL,
+    `is_read` TINYINT(1) DEFAULT 0,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- sessions
+CREATE TABLE `sessions` (
+    `id` VARCHAR(128) PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `fingerprint_hash` VARCHAR(128) NOT NULL,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `user_agent` VARCHAR(500) DEFAULT NULL,
+    `last_activity` INT UNSIGNED NOT NULL,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- audit_log
+CREATE TABLE `audit_log` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED DEFAULT NULL,
+    `action` VARCHAR(100) NOT NULL,
+    `entity_type` VARCHAR(50) DEFAULT NULL,
+    `entity_id` BIGINT UNSIGNED DEFAULT NULL,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `details` TEXT,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- api_logs
+CREATE TABLE `api_logs` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED DEFAULT NULL,
+    `endpoint` VARCHAR(255) NOT NULL,
+    `method` VARCHAR(10) NOT NULL,
+    `status_code` INT DEFAULT 200,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `user_agent` VARCHAR(255) DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- api_tokens
+CREATE TABLE `api_tokens` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `refresh_token` VARCHAR(255) NOT NULL UNIQUE,
+    `device_info` VARCHAR(255) DEFAULT NULL,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `revoked_at` DATETIME DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- electronic_signatures
+CREATE TABLE `electronic_signatures` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `entity_type` VARCHAR(50) NOT NULL,
+    `entity_id` BIGINT UNSIGNED NOT NULL,
+    `signature_hash` VARCHAR(255) NOT NULL,
+    `signed_data` TEXT,
+    `ip_address` VARCHAR(45) DEFAULT NULL,
+    `signed_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- البيانات الأولية
+-- المدير الافتراضي: admin / Admin@1234
+INSERT INTO `users` (`full_name`, `username`, `email`, `password_hash`, `role`, `approval_status`, `is_active`) VALUES
+('مدير النظام', 'admin', 'admin@maxlond.local',
+ '$2y$10$8uZt7zceyMn30HDCMse8ner8YQgWM8DhjT7dcS0xzfWY1Ly2m8ryW',
+ 'admin', 'approved', 1);
+
+INSERT INTO `accounts` (`code`, `name`, `type`) VALUES
+('1000', 'الأصول', 'asset'),
+('1100', 'النقدية', 'asset'),
+('1200', 'البنك', 'asset'),
+('1300', 'المواد والمخزون', 'asset'),
+('1400', 'الآليات والمعدات', 'asset'),
+('2000', 'الالتزامات', 'liability'),
+('2100', 'الموردون', 'liability'),
+('3000', 'حقوق الملكية', 'equity'),
+('4000', 'الإيرادات', 'revenue'),
+('5000', 'المصروفات', 'expense'),
+('5100', 'مصروفات المواد', 'expense'),
+('5200', 'مصروفات العمالة', 'expense'),
+('5300', 'مصروفات الوقود', 'expense'),
+('5400', 'مصروفات الصيانة', 'expense'),
+('5500', 'مصروفات النقل', 'expense'),
+('5600', 'مصروفات أخرى', 'expense');
+
+INSERT INTO `warehouse_categories` (`name`, `description`) VALUES
+('مواد بناء', 'أسمنت، حديد، رمل، حصى'),
+('كهربائيات', 'أسلاك، قواطع، إضاءة'),
+('سباكة', 'أنابيب، محابس، وصلات'),
+('أدوات', 'عدد يدوية'),
+('وقود وزيوت', 'بنزين، ديزل، زيوت');</pre>
+    </section>
+
+    <!-- ==================== .htaccess ==================== -->
+    <section class="card" id="htaccess">
+      <h2><span>🔒 .htaccess</span> <span class="badge badge-html">Apache</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-htaccess">📋 نسخ</button></div>
+<pre class="code" id="code-htaccess"># SpacePoint root rules for Apache 2.4 / PHP-FPM
+RewriteEngine On
+
+# Enable only after HTTPS is active and APP_URL uses https.
+# RewriteCond %{HTTPS} off
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+&lt;FilesMatch "\.(sql|md|log|ini|env|json)$"&gt;
+    Require all denied
+&lt;/FilesMatch&gt;
+
+Options -Indexes
+
+# Block external hotlinking of uploaded files.
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?aksat\.shop(?:/|$) [NC]
+RewriteRule \.(jpg|jpeg|png|gif|webp|pdf)$ - [F,NC,L]</pre>
+    </section>
+
+    <!-- ==================== .user.ini ==================== -->
+    <section class="card" id="userini">
+      <h2><span>⚙️ .user.ini</span> <span class="badge badge-html">INI</span></h2>
+      <div class="copy-row"><button class="btn" data-copy="code-userini">📋 نسخ</button></div>
+<pre class="code" id="code-userini">upload_max_filesize=10M
+post_max_size=12M
+max_execution_time=60</pre>
+    </section>
+
+    <!-- ==================== note ==================== -->
+    <section class="card">
+      <h2>📝 ملاحظة</h2>
+      <div class="callout">
+        <p><strong>الأكواد المتبقية:</strong> الصفحات التالية لم تُدرج في هذا الملف لتجنب الطول الزائد، لكنها متوفرة في مشروعك الأصلي:</p>
+        <ul style="line-height:2">
+          <li><code>admin/pending_users.php</code> — طلبات التسجيل</li>
+          <li><code>admin/work_plans.php</code> — خطط العمل</li>
+          <li><code>admin/work_updates.php</code> — تحديثات المهندسين</li>
+          <li><code>admin/report_view.php</code> — معاينة تقرير</li>
+          <li><code>admin/warehouse.php</code> + <code>warehouse_items.php</code> + <code>warehouse_moves.php</code></li>
+          <li><code>admin/machinery.php</code> + <code>repairs.php</code></li>
+          <li><code>admin/accounts.php</code> + <code>journal.php</code> + <code>financial.php</code></li>
+          <li><code>admin/export.php</code> + <code>notifications.php</code></li>
+          <li><code>api.php</code> (المركزي) + مجلد <code>api/</code> بالكامل</li>
+        </ul>
+        <p><strong>اطلب مني</strong> إضافة أي منها وأرسله لك مباشرة في رد منفصل.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="footer">Maxlond v2.0.0 · جميع أكواد واجهة الأدمن · صفحة HTML ثابتة</div>
+
+<script>
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const target = document.getElementById(btn.dataset.copy);
+      if (!target) return;
+      const text = target.textContent;
+      const original = btn.textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      btn.textContent = '✓ تم النسخ';
+      btn.classList.add('btn-copied');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('btn-copied');
+      }, 1800);
+    });
+  });
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
